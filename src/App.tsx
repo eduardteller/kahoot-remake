@@ -1,27 +1,27 @@
-import { useState } from "react";
-// import KahootIcon from "./assets/kahoot.svg";
+import { Link } from "react-router-dom";
+import Header from "./components/Header";
 
 function App() {
-  const [count, setCount] = useState(0);
   return (
-    <>
-      <header className="flex h-24 w-screen items-center justify-center">
-        <div className="flex h-full w-1/2 items-center justify-center">
-          <img className="h-full" src="src/assets/kahoot.svg" alt="" />
+    <Header>
+      <div
+        id="start-div"
+        className="card mx-auto mt-8 w-96 bg-base-100 shadow-xl"
+      >
+        <div className="card-body items-center text-center">
+          <h2 className="card-title">Start Kahoot! 👇</h2>
+          <p>Choose host or client mode</p>
+          <div className="card-actions flex flex-col items-center">
+            <Link to={"/host"} className="btn btn-primary btn-wide mt-4">
+              Host
+            </Link>
+            <Link to={"/client"} className="btn btn-secondary btn-wide mt-2">
+              Client
+            </Link>
+          </div>
         </div>
-        {/* <KahootIcon /> */}
-      </header>
-      <main className="h-screen w-screen bg-base-200">
-        <div className="flex h-full w-full items-center justify-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="btn btn-primary btn-lg"
-          >
-            {count}
-          </button>
-        </div>
-      </main>
-    </>
+      </div>
+    </Header>
   );
 }
 

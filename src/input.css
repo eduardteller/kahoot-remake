@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.li-regular {
+  @apply bg-base-200 text-base-content;
+}
+.li-active {
+  @apply bg-primary text-primary-content;
+}
+
+.li-main {
+  @apply flex h-12 items-center justify-between overflow-hidden rounded-lg p-4 text-xl font-semibold;
+}
