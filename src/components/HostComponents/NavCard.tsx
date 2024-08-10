@@ -1,20 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import QuestionCard from "./QuestionCard";
+import { MainDataContext } from "../../Host";
 
 const NavCard = () => {
   // const [disabled, setDisabled] = useState(true);
   const [openQuestions, setOpenQuestions] = useState(false);
 
+  const context = useContext(MainDataContext);
+  if (!context) {
+    throw new Error("useMainData must be used within a MainDataProvider");
+  }
+  const { mainData } = context;
+
   const changeDiv = () => {
     setOpenQuestions(!openQuestions);
   };
+
   return (
     <>
       {!openQuestions && (
-        <div
-          id="start-div"
-          className="card mx-auto mt-8 w-96 bg-base-100 shadow-xl"
-        >
+        <div className="card mx-auto mt-8 w-96 bg-base-100 shadow-xl">
           <div className="card-body items-center text-center">
             <h3 className="card-title">Host Kahoot!</h3>
             <div className="card-actions flex flex-col items-center">
@@ -25,24 +30,19 @@ const NavCard = () => {
                 Create quiz
               </button>
               <button
-                id="start-btn"
                 className="btn btn-primary btn-wide"
-                // disabled={disabled}
+                disabled={!mainData.length}
               >
                 Start session
               </button>
-              <button id="init-btn" className="btn btn-primary btn-wide hidden">
+              <button className="btn btn-primary btn-wide hidden">
                 Launch game
               </button>
             </div>
           </div>
         </div>
       )}
-      {openQuestions && (
-        <QuestionCard
-          onClick={() => setOpenQuestions(!openQuestions)}
-        ></QuestionCard>
-      )}
+      {openQuestions && <QuestionCard onClick={changeDiv}></QuestionCard>}
     </>
   );
 };
