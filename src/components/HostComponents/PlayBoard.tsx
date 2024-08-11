@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { MainDataContext } from "../../Host";
 import { Question } from "../../helpers/types";
 import { useQuery } from "@tanstack/react-query";
+import Scoreboard from "./Scoreboard";
 
 interface Props {
   sessionId: number;
@@ -34,16 +35,22 @@ const fetchRevealGame = async (sessionId: number, qIndex: number) => {
 const PlayBoard = ({ sessionId }: Props) => {
   const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showScoreboard, setShowScoreboard] = useState(false);
   const [mainIndex, setMainIndex] = useState(0);
   const [timer, setTimer] = useState(15);
   const [reveal, setReveal] = useState(false);
   const context = useContext(MainDataContext);
 
   const useNextQuestion = () => {
+    setShowScoreboard(false);
     setReveal(false);
     setTimer(15);
     setMainIndex(mainIndex + 1);
     refetch();
+  };
+
+  const scoreSet = () => {
+    setShowScoreboard(true);
   };
 
   const { data, isLoading, error, refetch } = useQuery({
@@ -92,6 +99,15 @@ const PlayBoard = ({ sessionId }: Props) => {
     return <div>No more queston</div>;
   }
 
+  if (showScoreboard) {
+    return (
+      <Scoreboard
+        nextQuestionSet={useNextQuestion}
+        sessionId={sessionId}
+      ></Scoreboard>
+    );
+  }
+
   return (
     <div className="relative mx-auto mt-8 flex max-w-7xl flex-col items-center font-mont">
       <h1 id="question" className="my-4 text-center text-2xl font-bold">
@@ -128,7 +144,7 @@ const PlayBoard = ({ sessionId }: Props) => {
         {mainData[mainIndex].answers.map((i: Question, index: number) => {
           return (
             <div
-              key={Math.floor(Math.random() * 100) * index}
+              key={`${i}${index}`}
               className={`flex h-40 w-1/2 items-center justify-center ${reveal ? (i.correct ? colorArr[index] : "bg-base-200") : colorArr[index]}`}
             >
               <h3 id="first" className="text-xl font-bold text-white">
@@ -141,7 +157,7 @@ const PlayBoard = ({ sessionId }: Props) => {
       <div className="mt-4 flex w-full items-center justify-center">
         <button
           className="btn btn-outline btn-info btn-lg btn-wide"
-          onClick={useNextQuestion}
+          onClick={scoreSet}
           disabled={!reveal}
         >
           Next

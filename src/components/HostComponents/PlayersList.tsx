@@ -6,6 +6,7 @@ import { Client, QuestionSet } from "../../helpers/types";
 interface Props {
   changeState: (id: number) => void;
   setSessionId: (id: number) => void;
+  gamePlaying: boolean;
 }
 
 const fetchNewSession = async (
@@ -24,10 +25,10 @@ const fetchNewSession = async (
   return await res.json();
 };
 
-const PlayersList = ({ changeState, setSessionId }: Props) => {
+const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
   const [users, setUsers] = useState<Client[]>([]);
   const context = useContext(MainDataContext);
-  const socketRef = useRef<WebSocket | null>(null);
+  const [socketRef, setSocketRef] = useState<WebSocket | null>(null);
   const idValue = useRef<HTMLDivElement>(null);
 
   if (!context) {
@@ -36,20 +37,21 @@ const PlayersList = ({ changeState, setSessionId }: Props) => {
 
   const { mainData } = context;
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["main-data"],
     queryFn: () => fetchNewSession(mainData),
+    enabled: false,
   });
 
   const WsConnect = (id: number) => {
-    socketRef.current = new WebSocket("ws://localhost:5090");
-
-    socketRef.current.onopen = () => {
+    const newSocket = new WebSocket("ws://localhost:5090");
+    setSocketRef(newSocket);
+    newSocket.onopen = () => {
       console.log("Host connected to the server");
-      socketRef.current?.send(JSON.stringify({ type: "host", id: id }));
+      newSocket?.send(JSON.stringify({ type: "host", id: id }));
     };
 
-    socketRef.current.onmessage = (event) => {
+    newSocket.onmessage = (event) => {
       const received = JSON.parse(event.data);
       switch (received.type) {
         case "client_data":
@@ -58,24 +60,27 @@ const PlayersList = ({ changeState, setSessionId }: Props) => {
       }
     };
 
-    socketRef.current.onclose = () => {
+    newSocket.onclose = () => {
       console.warn("Host disconnected from the server");
     };
 
-    socketRef.current.onerror = (error) => {
+    newSocket.onerror = (error) => {
       console.error("WebSocket error: ", error);
     };
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
+      if (newSocket) {
+        newSocket.close();
       }
     };
   };
 
   useEffect(() => {
     (document.getElementById("session-modal") as HTMLFormElement).showModal();
-    if (data) {
+    if (!data) {
+      refetch();
+    }
+    if (!socketRef && data) {
       setSessionId(data.id);
       const cleanup = WsConnect(data.id);
 
@@ -172,7 +177,9 @@ const PlayersList = ({ changeState, setSessionId }: Props) => {
                     );
                   })}
                 </ul>
-                <div className="card-actions items-center">
+                <div
+                  className={`card-actions items-center ${gamePlaying ? "hidden" : null}`}
+                >
                   <button
                     onClick={() => {
                       changeState(1);

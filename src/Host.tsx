@@ -3,7 +3,6 @@ import Header from "./components/Header";
 import NavCard from "./components/HostComponents/NavCard";
 import PlayBoard from "./components/HostComponents/PlayBoard";
 import PlayersList from "./components/HostComponents/PlayersList";
-import Scoreboard from "./components/HostComponents/Scoreboard";
 import { type QuestionSet } from "./helpers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -30,7 +29,7 @@ const Host = () => {
   const [modalEnabled, setModalEnabled] = useState<boolean>(false);
 
   const [stateManager, setStateManager] = useState<boolean[]>(
-    [...Array(3).keys()].map((i) => {
+    [...Array(2).keys()].map((i) => {
       return i === 0 ? true : false;
     }),
   );
@@ -52,9 +51,9 @@ const Host = () => {
         <MainDataContext.Provider value={{ mainData, setMainData }}>
           {stateManager[0] && <NavCard changeState={setPlayerModal}></NavCard>}
           {stateManager[1] && <PlayBoard sessionId={sessionId}></PlayBoard>}
-          {stateManager[2] && <Scoreboard></Scoreboard>}
           {modalEnabled && (
             <PlayersList
+              gamePlaying={stateManager[1] === true || stateManager[2] === true}
               setSessionId={(i) => setSessionId(i)}
               changeState={changeState}
             ></PlayersList>
