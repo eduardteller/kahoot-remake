@@ -1,8 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { MainDataContext } from "../../Host";
+import { useEffect, useState } from "react";
 import { Question } from "../../helpers/types";
 import { useQuery } from "@tanstack/react-query";
 import Scoreboard from "./Scoreboard";
+import ErrorPage from "../ErrorPage";
+import LoadingSpinner from "../LoadingSpinner";
+import { useMainDataContext } from "../../hooks/useMainDataContext";
+import { showPlayersModal } from "../../helpers/modal-func";
 
 interface Props {
   sessionId: number;
@@ -39,18 +42,16 @@ const PlayBoard = ({ sessionId }: Props) => {
   const [mainIndex, setMainIndex] = useState(0);
   const [timer, setTimer] = useState(15);
   const [reveal, setReveal] = useState(false);
-  const context = useContext(MainDataContext);
+  const { mainData } = useMainDataContext();
 
   const useNextQuestion = () => {
-    setShowScoreboard(false);
-    setReveal(false);
-    setTimer(15);
-    setMainIndex(mainIndex + 1);
-    refetch();
-  };
-
-  const scoreSet = () => {
-    setShowScoreboard(true);
+    if (!(mainIndex >= mainData.length - 1)) {
+      setShowScoreboard(false);
+      setReveal(false);
+      setTimer(15);
+      setMainIndex(mainIndex + 1);
+      refetch();
+    }
   };
 
   const { data, isLoading, error, refetch } = useQuery({
@@ -81,19 +82,9 @@ const PlayBoard = ({ sessionId }: Props) => {
     }
   }, [timer, data]);
 
-  if (error || errorReveal || (!isLoading && !data)) return <div>Error</div>;
+  if (error || errorReveal) return <ErrorPage />;
 
-  if (isLoading || isRevealing)
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-
-  if (!context) {
-    throw new Error("useMainData must be used within a MainDataProvider");
-  }
-  const { mainData } = context;
+  if (isLoading || isRevealing) return <LoadingSpinner></LoadingSpinner>;
 
   if (mainIndex + 1 > mainData.length) {
     return <div>No more queston</div>;
@@ -130,11 +121,7 @@ const PlayBoard = ({ sessionId }: Props) => {
           </p>
         </div>
         <button
-          onClick={() =>
-            (
-              document.getElementById("session-modal") as HTMLFormElement
-            ).showModal()
-          }
+          onClick={showPlayersModal}
           className="btn btn-ghost absolute right-5 top-2"
         >
           See players
@@ -157,7 +144,7 @@ const PlayBoard = ({ sessionId }: Props) => {
       <div className="mt-4 flex w-full items-center justify-center">
         <button
           className="btn btn-outline btn-info btn-lg btn-wide"
-          onClick={scoreSet}
+          onClick={() => setShowScoreboard(true)}
           disabled={!reveal}
         >
           Next

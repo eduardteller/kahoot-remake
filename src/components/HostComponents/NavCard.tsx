@@ -1,20 +1,14 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import QuestionCard from "./QuestionCard";
-import { MainDataContext } from "../../Host";
+import { useMainDataContext } from "../../hooks/useMainDataContext";
 
 interface Props {
   changeState: () => void;
 }
 
 const NavCard = ({ changeState }: Props) => {
-  // const [disabled, setDisabled] = useState(true);
   const [openQuestions, setOpenQuestions] = useState(false);
-
-  const context = useContext(MainDataContext);
-  if (!context) {
-    throw new Error("useMainData must be used within a MainDataProvider");
-  }
-  const { mainData } = context;
+  const { mainData } = useMainDataContext();
 
   const changeDiv = () => {
     setOpenQuestions(!openQuestions);

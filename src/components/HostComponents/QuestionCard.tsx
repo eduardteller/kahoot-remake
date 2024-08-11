@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { MainDataContext } from "../../Host";
 import { Question, QuestionSet } from "../../helpers/types";
+import toast from "react-hot-toast";
 
 interface Props {
   onClick: () => void;
@@ -28,21 +29,18 @@ const QuestionCard = ({ onClick }: Props) => {
   const [questionData, setQuestionData] = useState<string>("");
   const [errorText, setErrorText] = useState(false);
   const [errorCheck, setErrorCheck] = useState(false);
-  const [errorQuestion, setErrorQuestion] = useState(false);
 
   const addToMainData = () => {
     const allEmptyText = answerData.every((item) => item.answer.trim() === "");
     const allEmptyChecked = answerData.every((item) => item.correct === false);
 
-    if (questionData === "") {
-      setErrorQuestion(true);
-    }
-
     if (allEmptyChecked) {
+      toast.error("At least one answer should be correct!");
       setErrorCheck(true);
     }
 
     if (allEmptyText) {
+      toast.error("All four answers should be valid!");
       setErrorText(true);
     }
 
@@ -55,7 +53,6 @@ const QuestionCard = ({ onClick }: Props) => {
       setQuestionData("");
       setErrorText(false);
       setErrorCheck(false);
-      setErrorQuestion(false);
     }
   };
 
@@ -82,7 +79,7 @@ const QuestionCard = ({ onClick }: Props) => {
           <input
             type="text"
             placeholder="Question..."
-            className={`input input-bordered w-full ${errorQuestion ? "border-error" : ""}`}
+            className={`input input-bordered w-full`}
             value={questionData}
             onChange={(e) => setQuestionData(e.target.value)}
           />

@@ -50,7 +50,7 @@ const Scoreboard = ({ sessionId, nextQuestionSet }: Props) => {
             return (
               <li
                 key={`${i}${index}`}
-                className={`li-main ${index ? "li - regular" : "li - active"}`}
+                className={`li-main ${index === 0 ? "li-active" : "li-regular"}`}
               >
                 <p>{i.name}</p>
                 <p>{i.xp}</p>

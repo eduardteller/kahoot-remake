@@ -5,6 +5,8 @@ import PlayBoard from "./components/HostComponents/PlayBoard";
 import PlayersList from "./components/HostComponents/PlayersList";
 import { type QuestionSet } from "./helpers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
+import { showPlayersModal } from "./helpers/modal-func";
 
 interface MainDataContextType {
   mainData: QuestionSet[];
@@ -27,29 +29,29 @@ const Host = () => {
   const [mainData, setMainData] = useState<QuestionSet[]>([]);
   const [sessionId, setSessionId] = useState<number>(0);
   const [modalEnabled, setModalEnabled] = useState<boolean>(false);
-
-  const [stateManager, setStateManager] = useState<boolean[]>(
-    [...Array(2).keys()].map((i) => {
-      return i === 0 ? true : false;
-    }),
-  );
+  const [stateManager, setStateManager] = useState<boolean[]>([true, false]);
 
   const changeState = (id: number) =>
     setStateManager(
-      stateManager.map((_i, index) => {
+      stateManager.map((_, index) => {
         return index === id ? true : false;
       }),
     );
 
-  const setPlayerModal = () => {
-    setModalEnabled(true);
+  const manipulateModal = () => {
+    if (!modalEnabled) {
+      setModalEnabled(true);
+    } else {
+      showPlayersModal();
+    }
   };
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster position="bottom-center" reverseOrder={true} />
       <Header>
         <MainDataContext.Provider value={{ mainData, setMainData }}>
-          {stateManager[0] && <NavCard changeState={setPlayerModal}></NavCard>}
+          {stateManager[0] && <NavCard changeState={manipulateModal}></NavCard>}
           {stateManager[1] && <PlayBoard sessionId={sessionId}></PlayBoard>}
           {modalEnabled && (
             <PlayersList
