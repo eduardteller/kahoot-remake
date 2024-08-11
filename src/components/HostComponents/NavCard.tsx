@@ -2,7 +2,11 @@ import React, { useContext, useState } from "react";
 import QuestionCard from "./QuestionCard";
 import { MainDataContext } from "../../Host";
 
-const NavCard = () => {
+interface Props {
+  changeState: (id: number) => void;
+}
+
+const NavCard = ({ changeState }: Props) => {
   // const [disabled, setDisabled] = useState(true);
   const [openQuestions, setOpenQuestions] = useState(false);
 
@@ -32,6 +36,7 @@ const NavCard = () => {
               <button
                 className="btn btn-primary btn-wide"
                 disabled={!mainData.length}
+                onClick={() => changeState(1)}
               >
                 Start session
               </button>

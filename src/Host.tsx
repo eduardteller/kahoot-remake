@@ -18,13 +18,26 @@ export const MainDataContext = createContext<MainDataContextType | undefined>(
 const Host = () => {
   const [mainData, setMainData] = useState<QuestionSet[]>([]);
 
+  const [stateManager, setStateManager] = useState<boolean[]>(
+    [...Array(4).keys()].map((i) => {
+      return i === 0 ? true : false;
+    }),
+  );
+
+  const changeState = (id: number) =>
+    setStateManager(
+      stateManager.map((i, index) => {
+        return index === id ? true : false;
+      }),
+    );
+
   return (
     <Header>
       <MainDataContext.Provider value={{ mainData, setMainData }}>
-        <NavCard></NavCard>
-        <PlayBoard></PlayBoard>
-        <PlayersList></PlayersList>
-        <Scoreboard></Scoreboard>
+        {stateManager[0] && <NavCard changeState={changeState}></NavCard>}
+        {stateManager[1] && <PlayersList></PlayersList>}
+        {stateManager[2] && <PlayBoard></PlayBoard>}
+        {stateManager[3] && <Scoreboard></Scoreboard>}
       </MainDataContext.Provider>
     </Header>
   );
