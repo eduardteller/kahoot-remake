@@ -48,7 +48,7 @@ const QuestionCard = ({ onClick }: Props) => {
       setErrorText(true);
     }
 
-    if (!allEmptyText) {
+    if (!allEmptyText && !allEmptyChecked) {
       const tempArr = {} as QuestionSet;
       tempArr.answers = answerData;
       tempArr.question = questionData;

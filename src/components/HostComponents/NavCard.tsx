@@ -3,7 +3,7 @@ import QuestionCard from "./QuestionCard";
 import { MainDataContext } from "../../Host";
 
 interface Props {
-  changeState: (id: number) => void;
+  changeState: () => void;
 }
 
 const NavCard = ({ changeState }: Props) => {
@@ -36,7 +36,7 @@ const NavCard = ({ changeState }: Props) => {
               <button
                 className="btn btn-primary btn-wide"
                 disabled={!mainData.length}
-                onClick={() => changeState(1)}
+                onClick={() => changeState()}
               >
                 Start session
               </button>
