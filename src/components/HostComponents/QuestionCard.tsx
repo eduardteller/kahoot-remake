@@ -34,8 +34,6 @@ const QuestionCard = ({ onClick }: Props) => {
     const allEmptyText = answerData.every((item) => item.answer.trim() === "");
     const allEmptyChecked = answerData.every((item) => item.correct === false);
 
-    console.log(allEmptyText, allEmptyChecked);
-
     if (questionData === "") {
       setErrorQuestion(true);
     }

@@ -26,6 +26,8 @@ export const MainDataContext = createContext<MainDataContextType | undefined>(
 
 const Host = () => {
   const [mainData, setMainData] = useState<QuestionSet[]>([]);
+  const [sessionId, setSessionId] = useState<number>(0);
+  const [modalEnabled, setModalEnabled] = useState<boolean>(false);
 
   const [stateManager, setStateManager] = useState<boolean[]>(
     [...Array(3).keys()].map((i) => {
@@ -35,15 +37,13 @@ const Host = () => {
 
   const changeState = (id: number) =>
     setStateManager(
-      stateManager.map((i, index) => {
+      stateManager.map((_i, index) => {
         return index === id ? true : false;
       }),
     );
 
   const setPlayerModal = () => {
-    if (document) {
-      (document.getElementById("session-modal") as HTMLFormElement).showModal();
-    }
+    setModalEnabled(true);
   };
 
   return (
@@ -51,9 +51,14 @@ const Host = () => {
       <Header>
         <MainDataContext.Provider value={{ mainData, setMainData }}>
           {stateManager[0] && <NavCard changeState={setPlayerModal}></NavCard>}
-          {stateManager[1] && <PlayBoard></PlayBoard>}
+          {stateManager[1] && <PlayBoard sessionId={sessionId}></PlayBoard>}
           {stateManager[2] && <Scoreboard></Scoreboard>}
-          <PlayersList changeState={changeState}></PlayersList>
+          {modalEnabled && (
+            <PlayersList
+              setSessionId={(i) => setSessionId(i)}
+              changeState={changeState}
+            ></PlayersList>
+          )}
         </MainDataContext.Provider>
       </Header>
     </QueryClientProvider>
