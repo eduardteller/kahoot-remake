@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Client, QuestionSet } from "../../helpers/types";
+import { useMutation } from "@tanstack/react-query";
+import { Client } from "../../helpers/types";
 import ErrorPage from "../ErrorPage";
 import Clipboard from "../Svg/Clipboard";
 import LoadingSpinner from "../LoadingSpinner";
@@ -8,6 +8,7 @@ import { copyTextToClipboard } from "../../helpers/copyTextToClipboard";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { closePlayersModal } from "../../helpers/modal-func";
 import { wsConnectHost } from "../../helpers/WebSocketConnection";
+import { fetchNewSession } from "../../hooks/queryHooks";
 
 interface Props {
   changeState: (id: number) => void;
@@ -15,43 +16,29 @@ interface Props {
   gamePlaying: boolean;
 }
 
-const fetchNewSession = async (
-  mainData: QuestionSet[],
-): Promise<{ id: number }> => {
-  const res = await fetch("http://localhost:5090/api/send-question-data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      data: mainData,
-    }),
-  });
-
-  return await res.json();
-};
-
 const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
-  const [users, setUsers] = useState<Client[]>([]);
-  const [socketReference, setSocketReference] = useState<WebSocket | null>(
-    null,
-  );
-  const idValue = useRef<HTMLDivElement>(null);
   const { mainData } = useMainDataContext();
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["main-data"],
-    queryFn: () => fetchNewSession(mainData),
-    enabled: false,
+  const [users, setUsers] = useState<Client[]>([]);
+  const socketReference = useRef<WebSocket | null>(null);
+  const idValue = useRef<HTMLDivElement>(null);
+
+  const {
+    data,
+    mutate,
+    isPending: isLoading,
+    error,
+  } = useMutation({
+    mutationFn: () => fetchNewSession(mainData),
   });
 
   useEffect(() => {
     (document.getElementById("session-modal") as HTMLFormElement).showModal();
     if (!data) {
-      refetch();
+      mutate();
     }
     if (!socketReference && data) {
       setSessionId(data.id);
-      const cleanup = wsConnectHost(data.id, setSocketReference, setUsers);
+      const cleanup = wsConnectHost(data.id, socketReference, setUsers);
 
       return () => {
         cleanup();

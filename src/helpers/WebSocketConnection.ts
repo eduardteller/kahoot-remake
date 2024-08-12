@@ -5,17 +5,16 @@ const serverAddress = "ws://localhost:5090";
 
 export const wsConnectHost = (
   id: number,
-  setSocketReference: Dispatch<React.SetStateAction<WebSocket | null>>,
+  socketReference: MutableRefObject<WebSocket | null>,
   setUsers: Dispatch<React.SetStateAction<Client[]>>,
 ) => {
-  const newSocket = new WebSocket(serverAddress);
-  setSocketReference(newSocket);
-  newSocket.onopen = () => {
+  socketReference.current = new WebSocket(serverAddress);
+  socketReference.current.onopen = () => {
     console.log("Host connected to the server");
-    newSocket?.send(JSON.stringify({ type: "host", id: id }));
+    socketReference.current?.send(JSON.stringify({ type: "host", id: id }));
   };
 
-  newSocket.onmessage = (event) => {
+  socketReference.current.onmessage = (event) => {
     const received = JSON.parse(event.data);
     switch (received.type) {
       case "client_data":
@@ -24,17 +23,17 @@ export const wsConnectHost = (
     }
   };
 
-  newSocket.onclose = () => {
+  socketReference.current.onclose = () => {
     console.warn("Host disconnected from the server");
   };
 
-  newSocket.onerror = (error) => {
+  socketReference.current.onerror = (error) => {
     console.error("WebSocket error: ", error);
   };
 
   return () => {
-    if (newSocket) {
-      newSocket.close();
+    if (socketReference.current) {
+      socketReference.current.close();
     }
   };
 };
@@ -60,6 +59,7 @@ export const wsConnectClient = (
     switch (received.type) {
       case "set":
         setCurrentState("set");
+        setCurrentRevealState("wait");
         break;
       case "reveal":
         setCurrentState("reveal");

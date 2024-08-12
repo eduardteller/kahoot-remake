@@ -126,11 +126,10 @@ const QuestionCard = ({ onClick }: Props) => {
             Add
           </button>
         </div>
-        <div
-          id="question-counter"
-          className="card-title mt-4 rounded-xl bg-base-200 p-4"
-        >
-          Number of questions: {mainData.length}
+        <div className="mt-4 rounded-xl bg-base-200 p-2">
+          <p className="font-semibold">
+            Number of questions: {mainData.length}
+          </p>
         </div>
       </div>
     </div>

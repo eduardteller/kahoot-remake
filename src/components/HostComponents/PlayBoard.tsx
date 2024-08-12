@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import { Question } from "../../helpers/types";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Scoreboard from "./Scoreboard";
 import ErrorPage from "../ErrorPage";
 import LoadingSpinner from "../LoadingSpinner";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { showPlayersModal } from "../../helpers/modal-func";
 import { sendRevealGame, sendStartGame } from "../../hooks/queryHooks";
+import Checkmark from "../Svg/Checkmark";
+import Triangle from "../Svg/Triangle";
+import Rombus from "../Svg/Rombus";
+import Circle from "../Svg/Circle";
+import Square from "../Svg/Square";
 
 interface Props {
   sessionId: number;
   changeState: (id: number) => void;
 }
+
+const svgStyle = "w-10 absolute top-[50%] translate-y-[-50%] left-5";
 
 const PlayBoard = ({ sessionId, changeState }: Props) => {
   const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
@@ -22,19 +29,23 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
   const [reveal, setReveal] = useState(false);
   const { mainData } = useMainDataContext();
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["start-game"],
-    queryFn: () => sendStartGame(sessionId),
+  const {
+    data,
+    isPending: isLoading,
+    error,
+    mutate,
+  } = useMutation({
+    mutationKey: ["start-game"],
+    mutationFn: () => sendStartGame(sessionId),
   });
 
   const {
-    isLoading: isRevealing,
+    isPending: isRevealing,
     error: errorReveal,
-    refetch: fetchReveal,
-  } = useQuery({
-    queryKey: ["reveal-game"],
-    queryFn: () => sendRevealGame(sessionId, mainIndex),
-    enabled: false,
+    mutate: sendReveal,
+  } = useMutation({
+    mutationKey: ["reveal-correct-answers"],
+    mutationFn: () => sendRevealGame(sessionId, mainIndex),
   });
 
   const useNextQuestion = () => {
@@ -43,7 +54,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
       setReveal(false);
       setTimer(15);
       setMainIndex(mainIndex + 1);
-      refetch();
+      mutate();
     }
   };
 
@@ -56,9 +67,11 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
 
         return () => clearInterval(intervalId); // Cleanup the interval on component unmount
       } else {
-        fetchReveal();
+        sendReveal();
         setReveal(true);
       }
+    } else {
+      mutate();
     }
   }, [timer, data]);
 
@@ -69,7 +82,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
   if (showScoreboard) {
     if (mainIndex >= mainData.length - 1) {
       changeState(2);
-      return;
+      // return;
     }
     return (
       <Scoreboard
@@ -112,8 +125,18 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
           return (
             <div
               key={`${i}${index}`}
-              className={`flex h-40 w-1/2 items-center justify-center ${reveal ? (i.correct ? colorArr[index] : "bg-base-200") : colorArr[index]}`}
+              className={`relative flex h-40 w-1/2 items-center justify-center ${reveal ? (i.correct ? colorArr[index] : "bg-base-200") : colorArr[index]}`}
             >
+              {!reveal && index === 0 ? (
+                <Triangle styles={svgStyle} />
+              ) : !reveal && index === 1 ? (
+                <Rombus styles={svgStyle} />
+              ) : !reveal && index === 2 ? (
+                <Circle styles={svgStyle} />
+              ) : !reveal && index === 3 ? (
+                <Square styles={svgStyle} />
+              ) : null}
+              {reveal && i.correct && <Checkmark styles={svgStyle}></Checkmark>}
               <h3 id="first" className="text-xl font-bold text-white">
                 {i.answer}
               </h3>

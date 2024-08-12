@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { JoinData } from "../../Client";
 
 interface Props {
@@ -13,6 +13,7 @@ const ClientNav = ({ setSessData }: Props) => {
     if (name.current?.value && id.current?.value) {
       const nameNew = name.current?.value;
       const idNew = parseInt(id.current?.value);
+      console.log(nameNew, idNew);
       setSessData({ name: nameNew, id: idNew });
     }
   };
