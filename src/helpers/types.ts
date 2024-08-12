@@ -13,3 +13,10 @@ export type Client = {
   answer: number;
   xp: number;
 };
+
+export interface ReceivedData {
+  data: Client[];
+}
+
+export type Status = "wait" | "success" | "fail";
+export type StateOfClient = "reveal" | "set" | "wait";

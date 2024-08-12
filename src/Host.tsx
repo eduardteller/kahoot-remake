@@ -7,6 +7,7 @@ import { type QuestionSet } from "./helpers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { showPlayersModal } from "./helpers/modal-func";
+import ShowResults from "./components/HostComponents/ShowResults";
 
 interface MainDataContextType {
   mainData: QuestionSet[];
@@ -29,7 +30,11 @@ const Host = () => {
   const [mainData, setMainData] = useState<QuestionSet[]>([]);
   const [sessionId, setSessionId] = useState<number>(0);
   const [modalEnabled, setModalEnabled] = useState<boolean>(false);
-  const [stateManager, setStateManager] = useState<boolean[]>([true, false]);
+  const [stateManager, setStateManager] = useState<boolean[]>([
+    true,
+    false,
+    false,
+  ]);
 
   const changeState = (id: number) =>
     setStateManager(
@@ -52,7 +57,13 @@ const Host = () => {
       <Header>
         <MainDataContext.Provider value={{ mainData, setMainData }}>
           {stateManager[0] && <NavCard changeState={manipulateModal}></NavCard>}
-          {stateManager[1] && <PlayBoard sessionId={sessionId}></PlayBoard>}
+          {stateManager[1] && (
+            <PlayBoard
+              changeState={changeState}
+              sessionId={sessionId}
+            ></PlayBoard>
+          )}
+          {stateManager[2] && <ShowResults sessionId={sessionId}></ShowResults>}
           {modalEnabled && (
             <PlayersList
               gamePlaying={stateManager[1] === true || stateManager[2] === true}

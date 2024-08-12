@@ -7,6 +7,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import { copyTextToClipboard } from "../../helpers/copyTextToClipboard";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { closePlayersModal } from "../../helpers/modal-func";
+import { wsConnectHost } from "../../helpers/WebSocketConnection";
 
 interface Props {
   changeState: (id: number) => void;
@@ -43,38 +44,6 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
     enabled: false,
   });
 
-  const WsConnect = (id: number) => {
-    const newSocket = new WebSocket("ws://localhost:5090");
-    setSocketReference(newSocket);
-    newSocket.onopen = () => {
-      console.log("Host connected to the server");
-      newSocket?.send(JSON.stringify({ type: "host", id: id }));
-    };
-
-    newSocket.onmessage = (event) => {
-      const received = JSON.parse(event.data);
-      switch (received.type) {
-        case "client_data":
-          setUsers(received.clients as Client[]);
-          break;
-      }
-    };
-
-    newSocket.onclose = () => {
-      console.warn("Host disconnected from the server");
-    };
-
-    newSocket.onerror = (error) => {
-      console.error("WebSocket error: ", error);
-    };
-
-    return () => {
-      if (newSocket) {
-        newSocket.close();
-      }
-    };
-  };
-
   useEffect(() => {
     (document.getElementById("session-modal") as HTMLFormElement).showModal();
     if (!data) {
@@ -82,7 +51,7 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
     }
     if (!socketReference && data) {
       setSessionId(data.id);
-      const cleanup = WsConnect(data.id);
+      const cleanup = wsConnectHost(data.id, setSocketReference, setUsers);
 
       return () => {
         cleanup();

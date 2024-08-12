@@ -1,25 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Client } from "../../helpers/types";
-
-const fetchScoreboardData = async (
-  sessionId: number,
-): Promise<ReceivedData> => {
-  const response = await fetch("http://localhost:5090/api/scoreboard-data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: sessionId,
-    }),
-  });
-
-  return await response.json();
-};
-
-interface ReceivedData {
-  data: Client[];
-}
+import { fetchScoreboardData } from "../../hooks/queryHooks";
+import { ReceivedData } from "../../helpers/types";
 
 interface Props {
   sessionId: number;

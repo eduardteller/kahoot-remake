@@ -6,36 +6,14 @@ import ErrorPage from "../ErrorPage";
 import LoadingSpinner from "../LoadingSpinner";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { showPlayersModal } from "../../helpers/modal-func";
+import { sendRevealGame, sendStartGame } from "../../hooks/queryHooks";
 
 interface Props {
   sessionId: number;
+  changeState: (id: number) => void;
 }
 
-const fetchStartGame = async (sessionId: number) => {
-  const response = await fetch("http://localhost:5090/api/start-game", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: sessionId }),
-  });
-
-  return await response.json();
-};
-
-const fetchRevealGame = async (sessionId: number, qIndex: number) => {
-  const response = await fetch("http://localhost:5090/api/reveal-answers", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: sessionId, index: qIndex }),
-  });
-
-  return await response.json();
-};
-
-const PlayBoard = ({ sessionId }: Props) => {
+const PlayBoard = ({ sessionId, changeState }: Props) => {
   const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
@@ -43,6 +21,21 @@ const PlayBoard = ({ sessionId }: Props) => {
   const [timer, setTimer] = useState(15);
   const [reveal, setReveal] = useState(false);
   const { mainData } = useMainDataContext();
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["start-game"],
+    queryFn: () => sendStartGame(sessionId),
+  });
+
+  const {
+    isLoading: isRevealing,
+    error: errorReveal,
+    refetch: fetchReveal,
+  } = useQuery({
+    queryKey: ["reveal-game"],
+    queryFn: () => sendRevealGame(sessionId, mainIndex),
+    enabled: false,
+  });
 
   const useNextQuestion = () => {
     if (!(mainIndex >= mainData.length - 1)) {
@@ -54,31 +47,18 @@ const PlayBoard = ({ sessionId }: Props) => {
     }
   };
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["start-game"],
-    queryFn: () => fetchStartGame(sessionId),
-  });
-
-  const {
-    isLoading: isRevealing,
-    error: errorReveal,
-    refetch: fetchReveal,
-  } = useQuery({
-    queryKey: ["reveal-game"],
-    queryFn: () => fetchRevealGame(sessionId, mainIndex),
-    enabled: false,
-  });
-
   useEffect(() => {
-    if (timer > 0) {
-      const intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
+    if (data) {
+      if (timer > 0) {
+        const intervalId = setInterval(() => {
+          setTimer((prevTimer) => prevTimer - 1);
+        }, 1000);
 
-      return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-    } else {
-      fetchReveal();
-      setReveal(true);
+        return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+      } else {
+        fetchReveal();
+        setReveal(true);
+      }
     }
   }, [timer, data]);
 
@@ -86,11 +66,11 @@ const PlayBoard = ({ sessionId }: Props) => {
 
   if (isLoading || isRevealing) return <LoadingSpinner></LoadingSpinner>;
 
-  if (mainIndex + 1 > mainData.length) {
-    return <div>No more queston</div>;
-  }
-
   if (showScoreboard) {
+    if (mainIndex >= mainData.length - 1) {
+      changeState(2);
+      return;
+    }
     return (
       <Scoreboard
         nextQuestionSet={useNextQuestion}
