@@ -69,10 +69,7 @@ const QuestionCard = ({ onClick }: Props) => {
   };
 
   return (
-    <div
-      id="question-div"
-      className="card mx-auto mt-8 w-[512px] bg-base-100 shadow-xl"
-    >
+    <div className="card mx-auto my-8 w-[512px] bg-base-100 shadow-xl">
       <div className="card-body items-center text-center">
         <h2 className="card-title">Add question</h2>
         <div className="my-2 w-full">
@@ -110,15 +107,10 @@ const QuestionCard = ({ onClick }: Props) => {
           );
         })}
         <div className="card-actions items-center">
-          <button
-            onClick={onClick}
-            id="back-btn"
-            className="btn btn-error w-32"
-          >
+          <button onClick={onClick} className="btn btn-error w-32">
             Back
           </button>
           <button
-            id="add-question-btn"
             className="btn btn-success w-32"
             onClick={addToMainData}
             disabled={!questionData}
@@ -126,7 +118,7 @@ const QuestionCard = ({ onClick }: Props) => {
             Add
           </button>
         </div>
-        <div className="mt-4 rounded-xl bg-base-200 p-2">
+        <div className="mt-4 rounded-xl bg-base-200 px-4 py-2">
           <p className="font-semibold">
             Number of questions: {mainData.length}
           </p>

@@ -19,7 +19,7 @@ const ClientNav = ({ setSessData }: Props) => {
   };
 
   return (
-    <div id="first-div" className="card my-4 bg-base-100">
+    <div className="card mx-auto mt-12 w-96 bg-base-100">
       <div className="card-body items-center text-center">
         <h2 className="card-title">Join Kahoot!</h2>
         <label className="input input-bordered flex w-full max-w-sm items-center gap-2">

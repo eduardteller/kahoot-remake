@@ -35,7 +35,7 @@ const MainButtonInterface = ({ currentState, sessData }: Props) => {
   if (error) return <ErrorPage></ErrorPage>;
 
   return (
-    <div className="flex w-full flex-wrap">
+    <div className="mt-24 flex w-full flex-wrap">
       <button
         onClick={() => recordAndSend(0)}
         className={`${buttonStyle} bg-red-500 hover:bg-red-600`}

@@ -9,6 +9,7 @@ import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { closePlayersModal } from "../../helpers/modal-func";
 import { wsConnectHost } from "../../helpers/WebSocketConnection";
 import { fetchNewSession } from "../../hooks/queryHooks";
+import Checkmark from "../Svg/Checkmark";
 
 interface Props {
   changeState: (id: number) => void;
@@ -21,6 +22,8 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
   const [users, setUsers] = useState<Client[]>([]);
   const socketReference = useRef<WebSocket | null>(null);
   const idValue = useRef<HTMLDivElement>(null);
+
+  const [copyPressed, setCopyPressed] = useState(false);
 
   const {
     data,
@@ -65,19 +68,25 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
                 <div className="stats shadow">
                   <div className="stat bg-base-200">
                     <div className="stat-title">Connection ID:</div>
-                    <div ref={idValue} id="conn-id" className="stat-value">
+                    <div ref={idValue} className="stat-value">
                       {data?.id ?? "00000"}
                     </div>
                     <div className="stat-actions flex w-full items-center justify-center">
                       <button
-                        onClick={() =>
+                        onClick={() => {
                           copyTextToClipboard(
                             idValue.current?.textContent as string,
-                          )
-                        }
-                        className="btn btn-outline text-base-content hover:text-error-content"
+                          );
+                          setCopyPressed(true);
+                        }}
+                        className="btn btn-outline btn-sm text-base-content hover:text-error-content"
                       >
-                        Copy <Clipboard styles="h-6 w-6"></Clipboard>
+                        Copy{" "}
+                        {copyPressed ? (
+                          <Checkmark styles="w-4 h-4"></Checkmark>
+                        ) : (
+                          <Clipboard styles="h-4 w-4"></Clipboard>
+                        )}
                       </button>
                     </div>
                   </div>

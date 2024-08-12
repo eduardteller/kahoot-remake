@@ -36,7 +36,7 @@ const ShowResults = ({ sessionId }: Props) => {
           Results
         </h1>
         <div className="w-full">
-          <ul id="score-list" className="mx-auto flex w-[75%] flex-col gap-2">
+          <ul className="mx-auto flex w-[75%] flex-col gap-2">
             {sortedData?.map((i, index) => {
               return (
                 <li

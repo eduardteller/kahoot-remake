@@ -18,7 +18,7 @@ interface Props {
   changeState: (id: number) => void;
 }
 
-const svgStyle = "w-10 absolute top-[50%] translate-y-[-50%] left-5";
+const svgStyle = "w-10 absolute top-[50%] translate-y-[-50%] left-5 text-white";
 
 const PlayBoard = ({ sessionId, changeState }: Props) => {
   const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
@@ -93,8 +93,8 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
   }
 
   return (
-    <div className="relative mx-auto mt-8 flex max-w-7xl flex-col items-center font-mont">
-      <h1 id="question" className="my-4 text-center text-2xl font-bold">
+    <div className="relative mx-auto my-8 flex max-w-7xl flex-col items-center font-mont">
+      <h1 className="my-4 text-center text-2xl font-bold">
         {mainData[mainIndex].question}
       </h1>
 
@@ -109,9 +109,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
           <div className="loading loading-spinner loading-lg absolute right-[50%] top-[50%] translate-x-[50%] translate-y-[-50%]"></div>
         )}
         <div className="absolute left-5 top-[50%] flex h-16 w-16 translate-y-[-50%] items-center justify-center rounded-full bg-primary">
-          <p id="timer-div" className="text-3xl font-extrabold text-white">
-            {timer}
-          </p>
+          <p className="text-3xl font-extrabold text-white">{timer}</p>
         </div>
         <button
           onClick={showPlayersModal}
@@ -137,9 +135,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
                 <Square styles={svgStyle} />
               ) : null}
               {reveal && i.correct && <Checkmark styles={svgStyle}></Checkmark>}
-              <h3 id="first" className="text-xl font-bold text-white">
-                {i.answer}
-              </h3>
+              <h3 className="text-xl font-bold text-white">{i.answer}</h3>
             </div>
           );
         })}

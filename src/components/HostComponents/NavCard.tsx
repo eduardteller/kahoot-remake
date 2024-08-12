@@ -17,7 +17,7 @@ const NavCard = ({ changeState }: Props) => {
   return (
     <>
       {!openQuestions && (
-        <div className="card mx-auto mt-8 w-96 bg-base-100 shadow-xl">
+        <div className="card mx-auto mt-12 w-96 bg-base-100 shadow-xl">
           <div className="card-body items-center text-center">
             <h3 className="card-title">Host Kahoot!</h3>
             <div className="card-actions flex flex-col items-center">

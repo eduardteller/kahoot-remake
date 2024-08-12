@@ -8,7 +8,7 @@ const ClientAnswerResponse = ({ currentState }: Props) => {
   return (
     <>
       <div
-        className={`flex h-48 w-full flex-col items-center justify-center ${currentState === "success" ? "bg-success text-success-content" : currentState === "fail" ? "bg-error text-error-content" : ""}`}
+        className={`my-24 flex h-48 w-full flex-col items-center justify-center rounded-xl ${currentState === "success" ? "bg-success text-success-content" : currentState === "fail" ? "bg-error text-error-content" : ""}`}
       >
         {currentState == "wait" && (
           <h1 className="flex items-center gap-2 text-lg font-semibold">

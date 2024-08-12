@@ -48,9 +48,16 @@ const Client = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Header>
-        <div className="mx-auto flex max-w-7xl flex-col items-center">
+        <div className="mx-auto max-w-7xl">
           {!currentState && <ClientNav setSessData={setSessData}></ClientNav>}
-          {currentState === "wait" && <LoadingSpinner></LoadingSpinner>}
+          {currentState === "wait" && socketReference.current && (
+            <div className="mt-12 flex h-full w-full justify-center gap-2">
+              <h3 className="text-lg font-semibold">
+                Connected! Waiting for the start.
+              </h3>
+              <LoadingSpinner></LoadingSpinner>
+            </div>
+          )}
           {sessData && currentState === "set" && (
             <MainButtonInterface
               sessData={sessData}
