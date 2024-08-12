@@ -36,7 +36,7 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
     if (!data) {
       mutate();
     }
-    if (!socketReference && data) {
+    if (!socketReference.current && data) {
       setSessionId(data.id);
       const cleanup = wsConnectHost(data.id, socketReference, setUsers);
 

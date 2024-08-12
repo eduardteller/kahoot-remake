@@ -8,7 +8,7 @@ function App(props: PropsWithChildren) {
           <img className="h-full" src="src/assets/kahoot.svg" alt="" />
         </div>
       </header>
-      <main className="min-h-screen w-full overflow-x-hidden bg-base-200">
+      <main className="min-h-96 overflow-auto bg-base-200">
         {props.children}
       </main>
     </>
