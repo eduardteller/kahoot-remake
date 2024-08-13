@@ -6,7 +6,7 @@ import ErrorPage from "../ErrorPage";
 import LoadingSpinner from "../LoadingSpinner";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { showPlayersModal } from "../../helpers/modal-func";
-import { sendRevealGame, sendStartGame } from "../../hooks/queryHooks";
+import { sendRevealGame, sendStartGame } from "../../hooks/apiFunctions";
 import Checkmark from "../Svg/Checkmark";
 import Triangle from "../Svg/Triangle";
 import Rombus from "../Svg/Rombus";

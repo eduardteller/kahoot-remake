@@ -1,20 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../LoadingSpinner";
 import ErrorPage from "../ErrorPage";
-import { fetchScoreboardData } from "../../hooks/queryHooks";
 import { useEffect, useState } from "react";
 import { Client } from "../../helpers/types";
 import BustConfetti from "../BustConfetti";
+import { useFetchScoreData } from "../../hooks/queryHooks";
 
 interface Props {
   sessionId: number;
 }
 
 const ShowResults = ({ sessionId }: Props) => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["results"],
-    queryFn: () => fetchScoreboardData(sessionId),
-  });
+  const { data, isLoading, error } = useFetchScoreData(true, sessionId);
+
   const [sortedData, setSortedData] = useState<Client[] | null>(null);
 
   useEffect(() => {

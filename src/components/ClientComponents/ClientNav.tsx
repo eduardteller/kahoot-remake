@@ -1,19 +1,26 @@
 import { useRef } from "react";
 import { JoinData } from "../../Client";
+import { AccountData } from "../../helpers/types";
+
+type FormatCheck = null | "invalid token";
 
 interface Props {
   setSessData: (data: JoinData) => void;
+  accountData: AccountData;
 }
 
-const ClientNav = ({ setSessData }: Props) => {
+const ClientNav = ({ setSessData, accountData }: Props) => {
   const name = useRef<HTMLInputElement | null>(null);
   const id = useRef<HTMLInputElement | null>(null);
 
   const joinSession = () => {
-    if (name.current?.value && id.current?.value) {
+    if (accountData !== "invalid token" && accountData !== null) {
+      const nameNew = accountData.nickname;
+      const idNew = parseInt(accountData.discordID);
+      setSessData({ name: nameNew, id: idNew });
+    } else if (name.current?.value && id.current?.value) {
       const nameNew = name.current?.value;
       const idNew = parseInt(id.current?.value);
-      console.log(nameNew, idNew);
       setSessData({ name: nameNew, id: idNew });
     }
   };
@@ -25,6 +32,14 @@ const ClientNav = ({ setSessData }: Props) => {
         <label className="input input-bordered flex w-full max-w-sm items-center gap-2">
           Username
           <input
+            value={
+              accountData !== null && accountData !== "invalid token"
+                ? accountData.nickname
+                : ""
+            }
+            disabled={
+              !(accountData === "invalid token" || accountData === null)
+            }
             ref={name}
             placeholder="Type here"
             type="text"

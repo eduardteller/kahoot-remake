@@ -1,74 +1,20 @@
-import { QuestionSet, ReceivedData } from "../helpers/types";
+import { useQuery } from "@tanstack/react-query";
+import { fetchScoreboardData, fetchUserData } from "./apiFunctions";
 
-const serverUrl = "http://localhost:5090/api";
-
-export const sendStartGame = async (sessionId: number) => {
-  const response = await fetch(serverUrl + "/start-game", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: sessionId }),
-  });
-
-  return await response.json();
-};
-
-export const sendRevealGame = async (sessionId: number, qIndex: number) => {
-  return await fetch(serverUrl + "/reveal-answers", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: sessionId, index: qIndex }),
+export const useFetchUserAccount = (enable: boolean) => {
+  return useQuery({
+    queryKey: ["user-data"],
+    queryFn: fetchUserData,
+    enabled: enable,
   });
 };
 
-export const fetchScoreboardData = async (
-  sessionId: number,
-): Promise<ReceivedData> => {
-  const response = await fetch(serverUrl + "/scoreboard-data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: sessionId,
-    }),
-  });
-  return await response.json();
-};
-
-export const fetchNewSession = async (
-  mainData: QuestionSet[],
-): Promise<{ id: number }> => {
-  const res = await fetch(serverUrl + "/send-question-data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      data: mainData,
-    }),
+export const useFetchScoreData = (enable: boolean, id: number) => {
+  const result = useQuery({
+    queryKey: ["score-data"],
+    queryFn: () => fetchScoreboardData(id),
+    enabled: enable,
   });
 
-  return await res.json();
-};
-
-export const sendClientAnswer = async (
-  sessionId: number,
-  clientName: string,
-  answerIndex: number,
-) => {
-  return await fetch(serverUrl + "/client-answer", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      connection: sessionId,
-      name: clientName,
-      answer: answerIndex,
-    }),
-  });
+  return result;
 };

@@ -1,18 +1,24 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import Header from "./components/Header";
 import NavCard from "./components/HostComponents/NavCard";
 import PlayBoard from "./components/HostComponents/PlayBoard";
 import PlayersList from "./components/HostComponents/PlayersList";
-import { type QuestionSet } from "./helpers/types";
+import {
+  AccountData,
+  MainDataContextType,
+  type QuestionSet,
+} from "./helpers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { showPlayersModal } from "./helpers/modal-func";
 import ShowResults from "./components/HostComponents/ShowResults";
+import LoadingSpinner from "./components/LoadingSpinner";
+import ErrorPage from "./components/ErrorPage";
+import { useFetchUserAccount } from "./hooks/queryHooks";
 
-interface MainDataContextType {
-  mainData: QuestionSet[];
-  setMainData: React.Dispatch<React.SetStateAction<QuestionSet[]>>;
-}
+export const MainDataContext = createContext<MainDataContextType | undefined>(
+  undefined,
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,12 +27,8 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-export const MainDataContext = createContext<MainDataContextType | undefined>(
-  undefined,
-);
-
-const Host = () => {
+const HostMain = () => {
+  const [accountData, setAccountData] = useState<AccountData>(null);
   const [mainData, setMainData] = useState<QuestionSet[]>([]);
   const [sessionId, setSessionId] = useState<number>(0);
   const [modalEnabled, setModalEnabled] = useState<boolean>(false);
@@ -51,10 +53,30 @@ const Host = () => {
     }
   };
 
+  const { data, isLoading, error, refetch } = useFetchUserAccount(false);
+
+  useEffect(() => {
+    if (!accountData && data) {
+      if (data.message !== "error") {
+        setAccountData(data.userData);
+      } else {
+        setAccountData("invalid token");
+      }
+    }
+
+    if (!accountData && !data) {
+      refetch();
+    }
+  }, [data]);
+
+  if (isLoading) return <LoadingSpinner />;
+
+  if (error) return <ErrorPage></ErrorPage>;
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Toaster position="bottom-center" reverseOrder={true} />
-      <Header>
+      <Header account={accountData}>
         <MainDataContext.Provider value={{ mainData, setMainData }}>
           {stateManager[0] && <NavCard changeState={manipulateModal}></NavCard>}
           {stateManager[1] && (
@@ -73,8 +95,15 @@ const Host = () => {
           )}
         </MainDataContext.Provider>
       </Header>
-    </QueryClientProvider>
+    </>
   );
 };
 
+const Host = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HostMain />
+    </QueryClientProvider>
+  );
+};
 export default Host;

@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchScoreboardData } from "../../hooks/queryHooks";
 import { ReceivedData } from "../../helpers/types";
+import { useFetchScoreData } from "../../hooks/queryHooks";
 
 interface Props {
   sessionId: number;
@@ -12,10 +11,7 @@ const Scoreboard = ({ sessionId, nextQuestionSet }: Props) => {
     data: dataScore,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ["score-data"],
-    queryFn: () => fetchScoreboardData(sessionId),
-  });
+  } = useFetchScoreData(true, sessionId);
 
   if (isLoading) return <div>Loading</div>;
   if (error) return <div>Error</div>;

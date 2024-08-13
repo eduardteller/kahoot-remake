@@ -7,8 +7,8 @@ import LoadingSpinner from "../LoadingSpinner";
 import { copyTextToClipboard } from "../../helpers/copyTextToClipboard";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { closePlayersModal } from "../../helpers/modal-func";
-import { wsConnectHost } from "../../helpers/WebSocketConnection";
-import { fetchNewSession } from "../../hooks/queryHooks";
+import { wsConnectHost } from "../../helpers/webSockets";
+import { fetchNewSession } from "../../hooks/apiFunctions";
 import Checkmark from "../Svg/Checkmark";
 
 interface Props {

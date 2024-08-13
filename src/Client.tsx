@@ -3,10 +3,13 @@ import ClientAnswerResponse from "./components/ClientComponents/ClientAnswerResp
 import ClientNav from "./components/ClientComponents/ClientNav";
 import MainButtonInterface from "./components/ClientComponents/MainButtonInterface";
 import Header from "./components/Header";
-import { StateOfClient, Status } from "./helpers/types";
+import { AccountData, StateOfClient, Status } from "./helpers/types";
 import LoadingSpinner from "./components/LoadingSpinner";
-import { wsConnectClient } from "./helpers/WebSocketConnection";
+import { wsConnectClient } from "./helpers/webSockets";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ErrorPage from "./components/ErrorPage";
+import toast, { Toaster } from "react-hot-toast";
+import { useFetchUserAccount } from "./hooks/queryHooks";
 
 export interface JoinData {
   name: string;
@@ -21,11 +24,14 @@ const queryClient = new QueryClient({
   },
 });
 
-const Client = () => {
+const ClientBase = () => {
+  const [accountData, setAccountData] = useState<AccountData>(null);
   const [currentRevealState, setCurrentRevealState] = useState<Status>("wait");
   const [currentState, setCurrentState] = useState<StateOfClient | null>(null);
   const [sessData, setSessData] = useState<JoinData | null>(null);
   const socketReference = useRef<WebSocket | null>(null);
+
+  const { data, isLoading, error, refetch } = useFetchUserAccount(false);
 
   useEffect(() => {
     if (!socketReference.current && sessData) {
@@ -45,11 +51,36 @@ const Client = () => {
     }
   }, [sessData]);
 
+  useEffect(() => {
+    if (data && !accountData) {
+      if (data.message !== "error") {
+        setAccountData(data.userData);
+      } else {
+        toast.error("TOKEN EXPIRED");
+        setAccountData("invalid token");
+      }
+    }
+
+    if (!accountData && !data) {
+      refetch();
+    }
+  }, [data]);
+
+  if (isLoading) return <LoadingSpinner />;
+
+  if (error) return <ErrorPage></ErrorPage>;
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Header>
+      <Toaster position="bottom-center" reverseOrder={true} />
+      <Header account={accountData}>
         <div className="mx-auto max-w-7xl">
-          {!currentState && <ClientNav setSessData={setSessData}></ClientNav>}
+          {!currentState && (
+            <ClientNav
+              accountData={accountData}
+              setSessData={setSessData}
+            ></ClientNav>
+          )}
           {currentState === "wait" && socketReference.current && (
             <div className="mt-12 flex h-full w-full justify-center gap-2">
               <h3 className="text-lg font-semibold">
@@ -71,6 +102,14 @@ const Client = () => {
           )}
         </div>
       </Header>
+    </QueryClientProvider>
+  );
+};
+
+const Client = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ClientBase></ClientBase>
     </QueryClientProvider>
   );
 };

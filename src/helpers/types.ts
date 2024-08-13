@@ -20,3 +20,23 @@ export interface ReceivedData {
 
 export type Status = "wait" | "success" | "fail";
 export type StateOfClient = "reveal" | "set" | "wait";
+
+export type DbUser = {
+  _id: unknown;
+  nickname: string;
+  avatar: string;
+  discordID: string;
+  refreshTokenVersion: number;
+};
+
+export interface MainDataContextType {
+  mainData: QuestionSet[];
+  setMainData: React.Dispatch<React.SetStateAction<QuestionSet[]>>;
+}
+
+export type AccountData = DbUser | null | "invalid token";
+
+export interface UserResponse {
+  message: string;
+  userData: DbUser;
+}

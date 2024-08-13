@@ -1,14 +1,73 @@
 import { Link } from "react-router-dom";
 import Header from "./components/Header";
+import { Dispatch, useEffect, useState } from "react";
+import { AccountData, DbUser, UserResponse } from "./helpers/types";
+import { useFetchUserAccount } from "./hooks/queryHooks";
+import LoadingSpinner from "./components/LoadingSpinner";
+import ErrorPage from "./components/ErrorPage";
+import {
+  QueryClient,
+  QueryClientProvider,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
-function App() {
-  const params = new URLSearchParams(window.location.search);
-  const userParam = params.get("user") as string;
-  if (userParam) {
-    console.log(JSON.parse(userParam));
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const handleAuthCheck = (
+  receivedData: UseQueryResult<UserResponse, Error>,
+  accountData: AccountData,
+  setAccountData: Dispatch<React.SetStateAction<AccountData>>,
+) => {
+  const { data, refetch } = receivedData;
+  if (data && !accountData) {
+    if (data.message !== "error") {
+      setAccountData(data.userData);
+    } else {
+      setAccountData("invalid token");
+    }
   }
+  if (!data && !accountData) {
+    refetch();
+  }
+};
+
+function AppBase() {
+  const [accountData, setAccountData] = useState<AccountData>(null);
+  const fetchedUserData = useFetchUserAccount(false);
+  const { data, isLoading, error } = fetchedUserData;
+
+  useEffect(() => {
+    if (!userParam) {
+      handleAuthCheck(fetchedUserData, accountData, setAccountData);
+    }
+  }, [data]);
+
+  const params = new URLSearchParams(window.location.search);
+  const userParam = params.get("user");
+  if (userParam && !accountData) {
+    const parsedUserData = JSON.parse(userParam) as DbUser;
+    // console.log(parsedUserData);
+    setAccountData({
+      _id: parsedUserData._id,
+      nickname: parsedUserData.nickname,
+      avatar: parsedUserData.avatar,
+      discordID: parsedUserData.discordID,
+      refreshTokenVersion: parsedUserData.refreshTokenVersion,
+    });
+  }
+
+  if (isLoading) return <LoadingSpinner />;
+
+  if (error) return <ErrorPage></ErrorPage>;
+
   return (
-    <Header>
+    <Header account={accountData}>
       <div className="card mx-auto mt-12 w-96 bg-base-100 shadow-xl">
         <div className="card-body items-center text-center">
           <h2 className="card-title">Start Kahoot! 👇</h2>
@@ -26,5 +85,13 @@ function App() {
     </Header>
   );
 }
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppBase />
+    </QueryClientProvider>
+  );
+};
 
 export default App;

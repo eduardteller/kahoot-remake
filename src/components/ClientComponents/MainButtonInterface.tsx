@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { sendClientAnswer } from "../../hooks/queryHooks";
+import { sendClientAnswer } from "../../hooks/apiFunctions";
 import Triangle from "../Svg/Triangle";
 import Rombus from "../Svg/Rombus";
 import Circle from "../Svg/Circle";
