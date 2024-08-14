@@ -1,5 +1,3 @@
-import React from "react";
-
 const ErrorMessage = () => {
   return (
     <div role="alert" className="alert alert-error max-w-7xl">
