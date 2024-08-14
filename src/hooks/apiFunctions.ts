@@ -4,6 +4,8 @@ console.log(import.meta.env.VITE_BASE_URL);
 export const serverUrl = `${import.meta.env.VITE_BASE_URL}`;
 // export const serverUrl = "localhost:5090";
 
+// axios.defaults.withCredentials = true;
+
 const httpUrl = "https://" + serverUrl;
 
 export const sendStartGame = async (sessionId: number) => {
@@ -88,10 +90,23 @@ export const fetchUserData = async (): Promise<UserResponse> => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
   });
   return await response.json();
 };
+
+// export const fetchUserData = async (): Promise<UserResponse> => {
+//   const response = await axios.get(httpUrl + "/validate", {
+//     withCredentials: true,
+//     headers: {
+//       "Content-Type": "application/json",
+//       "ngrok-skip-browser-warning": "true",
+//     },
+//   });
+
+//   return response.data;
+// };
 
 export const getEndGameRequest = async (sessionId: number) => {
   return await fetch(httpUrl + "/api/end-game", {
