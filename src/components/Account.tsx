@@ -25,7 +25,7 @@ const Account = ({ accountData }: Props) => {
 
       {accountData === "invalid token" && (
         <a
-          href={`https://${serverUrl}/auth/discord`}
+          href={`http://${serverUrl}/auth/discord`}
           className="btn btn-outline btn-md mr-4 flex items-center justify-center gap-2"
         >
           <Discord styles="w-6 h-6"></Discord>
