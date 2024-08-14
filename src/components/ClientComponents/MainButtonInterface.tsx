@@ -5,9 +5,9 @@ import Rombus from "../Svg/Rombus";
 import Circle from "../Svg/Circle";
 import Square from "../Svg/Square";
 import { StateOfClient } from "../../helpers/types";
-import LoadingSpinner from "../LoadingSpinner";
 import ErrorPage from "../ErrorPage";
 import { JoinData } from "../../Client";
+import LoadingPage from "../LoadingPage";
 
 const buttonStyle = "flex h-40 w-1/2 items-center justify-center";
 
@@ -31,8 +31,8 @@ const MainButtonInterface = ({ currentState, sessData }: Props) => {
     mutate();
   };
 
-  if (isPending) return <LoadingSpinner></LoadingSpinner>;
-  if (error) return <ErrorPage></ErrorPage>;
+  if (isPending) return <LoadingPage />;
+  if (error) return <ErrorPage />;
 
   return (
     <div className="mt-24 flex w-full flex-wrap">

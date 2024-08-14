@@ -1,8 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import { JoinData } from "../../Client";
 import { AccountData } from "../../helpers/types";
-
-type FormatCheck = null | "invalid token";
 
 interface Props {
   setSessData: (data: JoinData) => void;
@@ -10,20 +8,45 @@ interface Props {
 }
 
 const ClientNav = ({ setSessData, accountData }: Props) => {
-  const name = useRef<HTMLInputElement | null>(null);
-  const id = useRef<HTMLInputElement | null>(null);
+  const [textValue, setTextValue] = useState("");
+  const [idValue, setIdValue] = useState(0);
 
   const joinSession = () => {
-    if (accountData !== "invalid token" && accountData !== null) {
-      const nameNew = accountData.nickname;
-      const idNew = parseInt(accountData.discordID);
-      setSessData({ name: nameNew, id: idNew });
-    } else if (name.current?.value && id.current?.value) {
-      const nameNew = name.current?.value;
-      const idNew = parseInt(id.current?.value);
+    // Initialize variables
+    let nameNew = "";
+    let idNew = 0;
+
+    // Determine the new name based on accountData or textValue
+    if (accountData && accountData !== "invalid token") {
+      nameNew = accountData.nickname;
+    } else if (textValue) {
+      nameNew = textValue;
+    }
+
+    // If a valid name exists, assign the idValue
+    if (nameNew && idValue) {
+      idNew = idValue;
+    }
+
+    // Only set session data if both name and id are valid
+    if (nameNew && idNew) {
       setSessData({ name: nameNew, id: idNew });
     }
   };
+
+  const handleTextValueChange = (e: string) => {
+    setTextValue(e);
+  };
+
+  const handleIdValueChange = (e: number) => {
+    setIdValue(e);
+  };
+
+  useEffect(() => {
+    if (accountData !== null && accountData !== "invalid token") {
+      setTextValue(accountData.nickname);
+    }
+  }, [accountData]);
 
   return (
     <div className="card mx-auto mt-12 w-96 bg-base-100">
@@ -32,15 +55,11 @@ const ClientNav = ({ setSessData, accountData }: Props) => {
         <label className="input input-bordered flex w-full max-w-sm items-center gap-2">
           Username
           <input
-            value={
-              accountData !== null && accountData !== "invalid token"
-                ? accountData.nickname
-                : ""
-            }
+            value={textValue}
             disabled={
               !(accountData === "invalid token" || accountData === null)
             }
-            ref={name}
+            onChange={(e) => handleTextValueChange(e.target.value)}
             placeholder="Type here"
             type="text"
             className="grow"
@@ -49,7 +68,8 @@ const ClientNav = ({ setSessData, accountData }: Props) => {
         <label className="input input-bordered flex w-full max-w-sm items-center gap-2">
           ID
           <input
-            ref={id}
+            onChange={(e) => handleIdValueChange(parseInt(e.target.value))}
+            value={idValue}
             placeholder="Type here"
             type="number"
             className="grow"

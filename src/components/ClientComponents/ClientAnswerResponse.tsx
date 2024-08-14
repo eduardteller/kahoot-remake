@@ -30,6 +30,13 @@ const ClientAnswerResponse = ({ currentState }: Props) => {
             <p>+100 SP</p>
           </>
         )}
+        {currentState === "end" && (
+          <>
+            <h1 className="mb-2 mt-4 text-lg font-semibold">
+              You finished: {1}
+            </h1>
+          </>
+        )}
       </div>
     </>
   );

@@ -1,11 +1,5 @@
-import React from "react";
-
 const LoadingSpinner = () => {
-  return (
-    <div className="flex items-center justify-center">
-      <span className="loading loading-spinner loading-md"></span>
-    </div>
-  );
+  return <div className="loading loading-spinner loading-md"></div>;
 };
 
 export default LoadingSpinner;

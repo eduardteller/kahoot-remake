@@ -18,7 +18,7 @@ export interface ReceivedData {
   data: Client[];
 }
 
-export type Status = "wait" | "success" | "fail";
+export type Status = "wait" | "success" | "fail" | "end";
 export type StateOfClient = "reveal" | "set" | "wait";
 
 export type DbUser = {

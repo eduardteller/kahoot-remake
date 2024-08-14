@@ -3,13 +3,14 @@ import Header from "./components/Header";
 import { Dispatch, useEffect, useState } from "react";
 import { AccountData, DbUser, UserResponse } from "./helpers/types";
 import { useFetchUserAccount } from "./hooks/queryHooks";
-import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorPage from "./components/ErrorPage";
+import { jwtDecode } from "jwt-decode";
 import {
   QueryClient,
   QueryClientProvider,
   UseQueryResult,
 } from "@tanstack/react-query";
+import LoadingPage from "./components/LoadingPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,22 +50,20 @@ function AppBase() {
   }, [data]);
 
   const params = new URLSearchParams(window.location.search);
-  const userParam = params.get("user");
+  const userParam = params.get("token");
   if (userParam && !accountData) {
-    const parsedUserData = JSON.parse(userParam) as DbUser;
-    // console.log(parsedUserData);
+    const user = jwtDecode(userParam) as DbUser;
     setAccountData({
-      _id: parsedUserData._id,
-      nickname: parsedUserData.nickname,
-      avatar: parsedUserData.avatar,
-      discordID: parsedUserData.discordID,
-      refreshTokenVersion: parsedUserData.refreshTokenVersion,
+      _id: user._id,
+      nickname: user.nickname,
+      avatar: user.avatar,
+      discordID: user.discordID,
+      refreshTokenVersion: user.refreshTokenVersion,
     });
   }
 
-  if (isLoading) return <LoadingSpinner />;
-
-  if (error) return <ErrorPage></ErrorPage>;
+  if (isLoading) return <LoadingPage />;
+  if (error) return <ErrorPage />;
 
   return (
     <Header account={accountData}>

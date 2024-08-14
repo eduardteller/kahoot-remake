@@ -3,7 +3,6 @@ import { Question } from "../../helpers/types";
 import { useMutation } from "@tanstack/react-query";
 import Scoreboard from "./Scoreboard";
 import ErrorPage from "../ErrorPage";
-import LoadingSpinner from "../LoadingSpinner";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { showPlayersModal } from "../../helpers/modal-func";
 import { sendRevealGame, sendStartGame } from "../../hooks/apiFunctions";
@@ -12,6 +11,7 @@ import Triangle from "../Svg/Triangle";
 import Rombus from "../Svg/Rombus";
 import Circle from "../Svg/Circle";
 import Square from "../Svg/Square";
+import LoadingPage from "../LoadingPage";
 
 interface Props {
   sessionId: number;
@@ -76,8 +76,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
   }, [timer, data]);
 
   if (error || errorReveal) return <ErrorPage />;
-
-  if (isLoading || isRevealing) return <LoadingSpinner></LoadingSpinner>;
+  if (isLoading || isRevealing) return <LoadingPage />;
 
   if (showScoreboard) {
     if (mainIndex >= mainData.length - 1) {

@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorPage from "./components/ErrorPage";
 import toast, { Toaster } from "react-hot-toast";
 import { useFetchUserAccount } from "./hooks/queryHooks";
+import LoadingPage from "./components/LoadingPage";
 
 export interface JoinData {
   name: string;
@@ -56,7 +57,7 @@ const ClientBase = () => {
       if (data.message !== "error") {
         setAccountData(data.userData);
       } else {
-        toast.error("TOKEN EXPIRED");
+        toast.error("Session expired, log in nigga!");
         setAccountData("invalid token");
       }
     }
@@ -66,12 +67,11 @@ const ClientBase = () => {
     }
   }, [data]);
 
-  if (isLoading) return <LoadingSpinner />;
-
-  if (error) return <ErrorPage></ErrorPage>;
+  if (isLoading) return <LoadingPage />;
+  if (error) return <ErrorPage />;
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Toaster position="bottom-center" reverseOrder={true} />
       <Header account={accountData}>
         <div className="mx-auto max-w-7xl">
@@ -86,7 +86,7 @@ const ClientBase = () => {
               <h3 className="text-lg font-semibold">
                 Connected! Waiting for the start.
               </h3>
-              <LoadingSpinner></LoadingSpinner>
+              <LoadingSpinner />
             </div>
           )}
           {sessData && currentState === "set" && (
@@ -102,7 +102,7 @@ const ClientBase = () => {
           )}
         </div>
       </Header>
-    </QueryClientProvider>
+    </>
   );
 };
 

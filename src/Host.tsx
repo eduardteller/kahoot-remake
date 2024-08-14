@@ -9,12 +9,12 @@ import {
   type QuestionSet,
 } from "./helpers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { showPlayersModal } from "./helpers/modal-func";
 import ShowResults from "./components/HostComponents/ShowResults";
-import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorPage from "./components/ErrorPage";
 import { useFetchUserAccount } from "./hooks/queryHooks";
+import LoadingPage from "./components/LoadingPage";
 
 export const MainDataContext = createContext<MainDataContextType | undefined>(
   undefined,
@@ -60,6 +60,7 @@ const HostMain = () => {
       if (data.message !== "error") {
         setAccountData(data.userData);
       } else {
+        toast.error("Session expired, log in nigga!");
         setAccountData("invalid token");
       }
     }
@@ -69,9 +70,8 @@ const HostMain = () => {
     }
   }, [data]);
 
-  if (isLoading) return <LoadingSpinner />;
-
-  if (error) return <ErrorPage></ErrorPage>;
+  if (isLoading) return <LoadingPage />;
+  if (error) return <ErrorPage />;
 
   return (
     <>

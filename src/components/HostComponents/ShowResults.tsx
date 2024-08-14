@@ -1,9 +1,9 @@
-import LoadingSpinner from "../LoadingSpinner";
 import ErrorPage from "../ErrorPage";
 import { useEffect, useState } from "react";
 import { Client } from "../../helpers/types";
 import BustConfetti from "../BustConfetti";
-import { useFetchScoreData } from "../../hooks/queryHooks";
+import { useEndGame, useFetchScoreData } from "../../hooks/queryHooks";
+import LoadingPage from "../LoadingPage";
 
 interface Props {
   sessionId: number;
@@ -11,7 +11,11 @@ interface Props {
 
 const ShowResults = ({ sessionId }: Props) => {
   const { data, isLoading, error } = useFetchScoreData(true, sessionId);
-
+  const {
+    isPending: isEnding,
+    error: errorEndGame,
+    mutate,
+  } = useEndGame(sessionId);
   const [sortedData, setSortedData] = useState<Client[] | null>(null);
 
   useEffect(() => {
@@ -19,11 +23,12 @@ const ShowResults = ({ sessionId }: Props) => {
       const sortedData: Client[] = data.data.sort((a, b) => a.xp - b.xp);
       sortedData.reverse();
       setSortedData(sortedData);
+      mutate();
     }
   }, [data]);
 
-  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
-  if (error) return <ErrorPage></ErrorPage>;
+  if (isLoading || isEnding) return <LoadingPage />;
+  if (error || errorEndGame) return <ErrorPage />;
 
   return (
     <>

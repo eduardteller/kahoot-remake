@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Client } from "../../helpers/types";
-import ErrorPage from "../ErrorPage";
 import Clipboard from "../Svg/Clipboard";
 import LoadingSpinner from "../LoadingSpinner";
 import { copyTextToClipboard } from "../../helpers/copyTextToClipboard";
@@ -10,6 +9,7 @@ import { closePlayersModal } from "../../helpers/modal-func";
 import { wsConnectHost } from "../../helpers/webSockets";
 import { fetchNewSession } from "../../hooks/apiFunctions";
 import Checkmark from "../Svg/Checkmark";
+import ErrorMessage from "../ErrorMessage";
 
 interface Props {
   changeState: (id: number) => void;
@@ -60,9 +60,9 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
           </form>
           <div className="card mx-auto mt-8 w-96 bg-base-100 text-neutral-content">
             {isLoading ? (
-              <LoadingSpinner></LoadingSpinner>
+              <LoadingSpinner />
             ) : error ? (
-              <ErrorPage></ErrorPage>
+              <ErrorMessage />
             ) : (
               <div className="card-body items-center">
                 <div className="stats shadow">

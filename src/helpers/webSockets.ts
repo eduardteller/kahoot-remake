@@ -1,7 +1,8 @@
 import { Dispatch, MutableRefObject } from "react";
 import { Client, StateOfClient, Status } from "./types";
+import { serverUrl } from "../hooks/apiFunctions";
 
-const serverAddress = "ws://localhost:5090";
+const serverAddress = "wss://" + serverUrl;
 
 export const wsConnectHost = (
   id: number,
@@ -16,6 +17,7 @@ export const wsConnectHost = (
 
   socketReference.current.onmessage = (event) => {
     const received = JSON.parse(event.data);
+    console.log(received);
     switch (received.type) {
       case "client_data":
         setUsers(received.clients as Client[]);
@@ -50,6 +52,11 @@ export const wsConnectClient = (
       `?clientId=${encodeURIComponent(name)}&connectId=${encodeURIComponent(connectionID)}`,
   );
 
+  console.log(
+    serverAddress +
+      `?clientId=${encodeURIComponent(name)}&connectId=${encodeURIComponent(connectionID)}`,
+  );
+
   setSocketReference.current.onopen = () => {
     console.log("Client connected to the server");
   };
@@ -60,6 +67,10 @@ export const wsConnectClient = (
       case "set":
         setCurrentState("set");
         setCurrentRevealState("wait");
+        break;
+      case "end":
+        setCurrentState("reveal");
+        setCurrentRevealState("end");
         break;
       case "reveal":
         setCurrentState("reveal");
