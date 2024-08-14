@@ -1,9 +1,10 @@
 import { QuestionSet, ReceivedData, UserResponse } from "../helpers/types";
 
-export const serverUrl = "94cb-93-185-248-95.ngrok-free.app";
+console.log(import.meta.env.VITE_BASE_URL);
+export const serverUrl = `${import.meta.env.VITE_BASE_URL}`;
 // export const serverUrl = "localhost:5090";
 
-const httpUrl = "https://" + serverUrl;
+const httpUrl = "http://" + serverUrl;
 
 export const sendStartGame = async (sessionId: number) => {
   const response = await fetch(httpUrl + "/api/start-game", {
