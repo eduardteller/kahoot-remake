@@ -2,7 +2,7 @@ import { Dispatch, MutableRefObject } from "react";
 import { Client, StateOfClient, Status } from "./types";
 import { serverUrl } from "../hooks/apiFunctions";
 
-const serverAddress = "ws://" + serverUrl;
+const serverAddress = "wss://" + serverUrl;
 
 export const wsConnectHost = (
   id: number,

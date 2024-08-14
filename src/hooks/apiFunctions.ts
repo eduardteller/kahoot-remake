@@ -4,7 +4,7 @@ console.log(import.meta.env.VITE_BASE_URL);
 export const serverUrl = `${import.meta.env.VITE_BASE_URL}`;
 // export const serverUrl = "localhost:5090";
 
-const httpUrl = "http://" + serverUrl;
+const httpUrl = "https://" + serverUrl;
 
 export const sendStartGame = async (sessionId: number) => {
   const response = await fetch(httpUrl + "/api/start-game", {
