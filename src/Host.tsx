@@ -53,20 +53,16 @@ const HostMain = () => {
     }
   };
 
-  const { data, isLoading, error, refetch } = useFetchUserAccount(false);
+  const { data, isLoading, error } = useFetchUserAccount(true);
 
   useEffect(() => {
-    if (!accountData && data) {
+    if (data) {
       if (data.message !== "error") {
         setAccountData(data.userData);
       } else {
         toast.error("Session expired, log in nigga!");
         setAccountData("invalid token");
       }
-    }
-
-    if (!accountData && !data) {
-      refetch();
     }
   }, [data]);
 

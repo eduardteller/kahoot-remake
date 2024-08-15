@@ -35,8 +35,8 @@ const PlayersList = ({ changeState, setSessionId, gamePlaying }: Props) => {
   });
 
   useEffect(() => {
-    (document.getElementById("session-modal") as HTMLFormElement).showModal();
     if (!data) {
+      (document.getElementById("session-modal") as HTMLFormElement).showModal();
       mutate();
     }
     if (!socketReference.current && data) {

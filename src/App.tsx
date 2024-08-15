@@ -5,11 +5,7 @@ import { AccountData, DbUser, UserResponse } from "./helpers/types";
 import { useFetchUserAccount } from "./hooks/queryHooks";
 import ErrorPage from "./components/ErrorPage";
 import { jwtDecode } from "jwt-decode";
-import {
-  QueryClient,
-  QueryClientProvider,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoadingPage from "./components/LoadingPage";
 
 const queryClient = new QueryClient({
@@ -21,31 +17,26 @@ const queryClient = new QueryClient({
 });
 
 const handleAuthCheck = (
-  receivedData: UseQueryResult<UserResponse, Error>,
-  accountData: AccountData,
+  receivedData: UserResponse | undefined,
   setAccountData: Dispatch<React.SetStateAction<AccountData>>,
 ) => {
-  const { data, refetch } = receivedData;
-  if (data && !accountData) {
-    if (data.message !== "error") {
-      setAccountData(data.userData);
+  if (receivedData) {
+    if (receivedData.message !== "error") {
+      setAccountData(receivedData.userData);
     } else {
       setAccountData("invalid token");
     }
-  }
-  if (!data && !accountData) {
-    refetch();
   }
 };
 
 function AppBase() {
   const [accountData, setAccountData] = useState<AccountData>(null);
-  const fetchedUserData = useFetchUserAccount(false);
+  const fetchedUserData = useFetchUserAccount(true);
   const { data, isLoading, error } = fetchedUserData;
 
   useEffect(() => {
-    if (!userParam) {
-      handleAuthCheck(fetchedUserData, accountData, setAccountData);
+    if (data) {
+      handleAuthCheck(data, setAccountData);
     }
   }, [data]);
 

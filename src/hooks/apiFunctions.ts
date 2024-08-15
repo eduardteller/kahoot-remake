@@ -1,19 +1,18 @@
 import { QuestionSet, ReceivedData, UserResponse } from "../helpers/types";
 
-console.log(import.meta.env.VITE_BASE_URL);
 export const serverUrl = `${import.meta.env.VITE_BASE_URL}`;
-// export const serverUrl = "localhost:5090";
 
-// axios.defaults.withCredentials = true;
-
-const httpUrl = "https://" + serverUrl;
-
+// const httpUrl = "https://" + serverUrl;
+const jasmo = import.meta.env.VITE_PRODUCTION as string;
+const httpUrl = "http" + (jasmo === "true" ? "s" : "") + "://" + serverUrl;
+console.log(httpUrl);
 export const sendStartGame = async (sessionId: number) => {
   const response = await fetch(httpUrl + "/api/start-game", {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ id: sessionId }),
   });
@@ -27,6 +26,7 @@ export const sendRevealGame = async (sessionId: number, qIndex: number) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ id: sessionId, index: qIndex }),
   });
@@ -40,6 +40,7 @@ export const fetchScoreboardData = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       id: sessionId,
@@ -56,6 +57,7 @@ export const fetchNewSession = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       data: mainData,
@@ -75,6 +77,7 @@ export const sendClientAnswer = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       connection: sessionId,
@@ -114,6 +117,7 @@ export const getEndGameRequest = async (sessionId: number) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ id: sessionId }),
   });
