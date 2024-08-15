@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "src": "/", "dest": "/" },
-    { "src": "/host", "dest": "/" },
-    { "src": "/client", "dest": "/" }
+    { "source": "/", "destination": "/" },
+    { "source": "/host", "destination": "/" },
+    { "source": "/client", "destination": "/" }
   ]
 }
