@@ -21,31 +21,26 @@ const queryClient = new QueryClient({
 });
 
 const handleAuthCheck = (
-  receivedData: UseQueryResult<UserResponse, Error>,
-  accountData: AccountData,
+  receivedData: UserResponse | undefined,
   setAccountData: Dispatch<React.SetStateAction<AccountData>>,
 ) => {
-  const { data, refetch } = receivedData;
-  if (data && !accountData) {
-    if (data.message !== "error") {
-      setAccountData(data.userData);
+  if (receivedData) {
+    if (receivedData.message !== "error") {
+      setAccountData(receivedData.userData);
     } else {
       setAccountData("invalid token");
     }
-  }
-  if (!data && !accountData) {
-    refetch();
   }
 };
 
 function AppBase() {
   const [accountData, setAccountData] = useState<AccountData>(null);
-  const fetchedUserData = useFetchUserAccount(false);
+  const fetchedUserData = useFetchUserAccount(true);
   const { data, isLoading, error } = fetchedUserData;
 
   useEffect(() => {
-    if (!userParam) {
-      handleAuthCheck(fetchedUserData, accountData, setAccountData);
+    if (data) {
+      handleAuthCheck(data, setAccountData);
     }
   }, [data]);
 

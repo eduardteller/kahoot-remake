@@ -8,7 +8,6 @@ import { serverUrl } from "../hooks/apiFunctions";
 //     : "" + "://" + serverUrl;
 
 const serverAddress = "wss://" + serverUrl;
-console.log(serverAddress);
 
 export const wsConnectHost = (
   id: number,

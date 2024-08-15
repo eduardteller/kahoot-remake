@@ -32,7 +32,7 @@ const ClientBase = () => {
   const [sessData, setSessData] = useState<JoinData | null>(null);
   const socketReference = useRef<WebSocket | null>(null);
 
-  const { data, isLoading, error, refetch } = useFetchUserAccount(false);
+  const { data, isLoading, error } = useFetchUserAccount(true);
 
   useEffect(() => {
     if (!socketReference.current && sessData) {
@@ -53,17 +53,13 @@ const ClientBase = () => {
   }, [sessData]);
 
   useEffect(() => {
-    if (data && !accountData) {
+    if (data) {
       if (data.message !== "error") {
         setAccountData(data.userData);
       } else {
         toast.error("Session expired, log in nigga!");
         setAccountData("invalid token");
       }
-    }
-
-    if (!accountData && !data) {
-      refetch();
     }
   }, [data]);
 
