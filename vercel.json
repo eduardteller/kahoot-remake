@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "src": "/", "dest": "/" },
+    { "src": "/host", "dest": "/" },
+    { "src": "/client", "dest": "/" }
+  ]
+}
