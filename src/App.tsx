@@ -5,11 +5,7 @@ import { AccountData, DbUser, UserResponse } from "./helpers/types";
 import { useFetchUserAccount } from "./hooks/queryHooks";
 import ErrorPage from "./components/ErrorPage";
 import { jwtDecode } from "jwt-decode";
-import {
-  QueryClient,
-  QueryClientProvider,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoadingPage from "./components/LoadingPage";
 
 const queryClient = new QueryClient({
