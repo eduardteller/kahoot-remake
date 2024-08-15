@@ -1,10 +1,6 @@
 import { QuestionSet, ReceivedData, UserResponse } from "../helpers/types";
 
-console.log(import.meta.env.VITE_BASE_URL);
 export const serverUrl = `${import.meta.env.VITE_BASE_URL}`;
-// export const serverUrl = "localhost:5090";
-
-// axios.defaults.withCredentials = true;
 
 const httpUrl = "https://" + serverUrl;
 

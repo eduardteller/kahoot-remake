@@ -22,7 +22,7 @@ const svgStyle = "w-10 absolute top-[50%] translate-y-[-50%] left-5 text-white";
 
 const PlayBoard = ({ sessionId, changeState }: Props) => {
   const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
-  const [imageLoaded, setImageLoaded] = useState(false);
+  // const [imageLoaded, setImageLoaded] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
   const [mainIndex, setMainIndex] = useState(0);
   const [timer, setTimer] = useState(15);
@@ -98,7 +98,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
       </h1>
 
       <div className="relative flex h-60 w-full items-center justify-center bg-base-100 py-8">
-        <img
+        {/* <img
           onLoad={() => setImageLoaded(true)}
           className="h-full"
           src="/src/assets/123.svg"
@@ -106,7 +106,8 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
         />
         {!imageLoaded && (
           <div className="loading loading-spinner loading-lg absolute right-[50%] top-[50%] translate-x-[50%] translate-y-[-50%]"></div>
-        )}
+        )} */}
+        <div className="h-full w-96 bg-base-200"></div>
         <div className="absolute left-5 top-[50%] flex h-16 w-16 translate-y-[-50%] items-center justify-center rounded-full bg-primary">
           <p className="text-3xl font-extrabold text-white">{timer}</p>
         </div>
