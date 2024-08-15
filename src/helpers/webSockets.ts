@@ -2,7 +2,13 @@ import { Dispatch, MutableRefObject } from "react";
 import { Client, StateOfClient, Status } from "./types";
 import { serverUrl } from "../hooks/apiFunctions";
 
+// const serverAddress =
+//   "ws" + import.meta.env.VITE_PRODUCTION === "true"
+//     ? "s"
+//     : "" + "://" + serverUrl;
+
 const serverAddress = "wss://" + serverUrl;
+console.log(serverAddress);
 
 export const wsConnectHost = (
   id: number,

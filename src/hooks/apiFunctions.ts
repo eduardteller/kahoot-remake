@@ -10,6 +10,7 @@ export const sendStartGame = async (sessionId: number) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ id: sessionId }),
   });
@@ -23,6 +24,7 @@ export const sendRevealGame = async (sessionId: number, qIndex: number) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ id: sessionId, index: qIndex }),
   });
@@ -36,6 +38,7 @@ export const fetchScoreboardData = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       id: sessionId,
@@ -52,6 +55,7 @@ export const fetchNewSession = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       data: mainData,
@@ -71,6 +75,7 @@ export const sendClientAnswer = async (
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       connection: sessionId,
@@ -110,6 +115,7 @@ export const getEndGameRequest = async (sessionId: number) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ id: sessionId }),
   });
