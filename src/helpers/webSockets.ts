@@ -7,7 +7,11 @@ import { serverUrl } from "../hooks/apiFunctions";
 //     ? "s"
 //     : "" + "://" + serverUrl;
 
-const serverAddress = "wss://" + serverUrl;
+const serverAddress =
+  "ws" +
+  ((import.meta.env.VITE_PRODUCTION as string) === "true" ? "s" : "") +
+  "://" +
+  serverUrl;
 
 export const wsConnectHost = (
   id: number,
