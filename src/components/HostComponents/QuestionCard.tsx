@@ -4,6 +4,20 @@ import toast from "react-hot-toast";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { useMutation } from "@tanstack/react-query";
 import LoadingSpinner from "../LoadingSpinner";
+import { z } from "zod";
+
+const QuestionSchema = z.object({
+  answer: z.string().min(1, { message: "The answers cannot be empty." }),
+  correct: z.boolean(),
+});
+
+const ArraySchema = z
+  .array(QuestionSchema)
+  .length(4)
+  .refine((questions) => questions.some((question) => question.correct), {
+    message: "At least one answer must be correct.",
+    path: ["no_answers_true"],
+  });
 
 interface Props {
   onClick: () => void;
@@ -40,10 +54,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        discordId:
-          account !== "invalid token" && account !== null
-            ? account.discordID
-            : 0,
+        discordId: account !== null ? account.discordID : null,
         data: mainData,
         name: inputName,
       }),
@@ -52,7 +63,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
 
   const getNames = async () => {
     const dataNamesNew = await fetch(
-      `http://localhost:5090/api/get-quiz/${account && account !== "invalid token" ? account.discordID : ""}`,
+      `http://localhost:5090/api/get-quiz/${account ? account.discordID : ""}`,
       {
         method: "GET",
         credentials: "include",
@@ -129,7 +140,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
     (document.getElementById("my_modal_1") as HTMLFormElement).showModal();
   };
   const handleLoadClick = () => {
-    if (account !== "invalid token" && account !== null) {
+    if (account !== null) {
       mutateGet();
       (document.getElementById("my_modal_2") as HTMLFormElement).showModal();
     }
@@ -140,42 +151,56 @@ const QuestionCard = ({ onClick, account }: Props) => {
   };
 
   const handleSaveQuizButton = () => {
-    if (inputName && mainData.length) {
+    try {
+      z.string().min(1).parse(inputName);
       mutate();
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast.error(err.issues[0].message);
+      }
     }
   };
 
   const addToMainData = () => {
-    const allEmptyText = answerData.every((item) => item.answer.trim() !== "");
-    const allEmptyChecked = answerData.every((item) => item.correct === false);
+    try {
+      const answersArrayChecked = ArraySchema.parse(answerData);
+      const questionChecked = z
+        .string()
+        .min(1, { message: "The question cannot be empty." })
+        .parse(questionData);
 
-    if (allEmptyChecked) {
-      toast.error("At least one answer should be correct!");
-      setErrorCheck(true);
-    }
-
-    if (!allEmptyText) {
-      toast.error("All four answers should be valid!");
-      setErrorText(true);
-    }
-
-    if (allEmptyText && !allEmptyChecked) {
       const tempArr = {} as QuestionSet;
-      tempArr.answers = answerData;
-      tempArr.question = questionData;
+      tempArr.answers = answersArrayChecked;
+      tempArr.question = questionChecked;
 
       setMainData([...mainData, tempArr]);
       setAnswerData([...initialState]);
       setQuestionData("");
       setErrorText(false);
       setErrorCheck(false);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        let prev = "";
+        for (const error of err.issues) {
+          if (error.code === "too_small") {
+            setErrorText(true);
+          }
+          if (error.code === "custom") {
+            setErrorCheck(true);
+          }
+          if (error.message !== prev) {
+            toast.error(error.message);
+          }
+          prev = error.message;
+        }
+      }
     }
   };
 
   return (
     <>
       <div className="card mx-auto my-8 w-[512px] bg-base-100 shadow-xl">
-        <div className="card-body items-center text-center">
+        <div className="card-body relative items-center text-center">
           <h2 className="card-title">Add question</h2>
           <div className="my-2 w-full">
             <input
@@ -211,41 +236,35 @@ const QuestionCard = ({ onClick, account }: Props) => {
               </div>
             );
           })}
-          <div className="card-actions items-center">
+          <div className="card-actions mt-4 items-center">
             <button onClick={onClick} className="btn btn-error w-32">
               Back
             </button>
-            <button
-              className="btn btn-success w-32"
-              onClick={addToMainData}
-              disabled={!questionData}
-            >
+            <button className="btn btn-success w-32" onClick={addToMainData}>
               Add
             </button>
           </div>
-          <div className="mt-4 rounded-xl bg-base-200 px-4 py-2">
-            <p className="font-semibold">
-              Number of questions: {mainData.length}
-            </p>
+          <div className="absolute right-8 top-6 rounded-xl bg-base-200 px-4 py-2">
+            <p className="font-semibold">Quiz count: {mainData.length}</p>
           </div>
-          <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl bg-base-200 p-4">
-            <button
-              onClick={handleLoadClick}
-              className="btn btn-info btn-wide"
-              disabled={!account || account === "invalid token"}
-            >
-              Load
-            </button>
-            <button
-              onClick={handleSaveClick}
-              className="btn btn-info btn-wide"
-              disabled={
-                !mainData.length || !account || account === "invalid token"
-              }
-            >
-              Save
-            </button>
-          </div>
+          {account && (
+            <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl bg-base-200 p-4">
+              <h3 className="my-2 font-semibold">Save/Load Quiz</h3>
+              <button
+                onClick={handleLoadClick}
+                className="btn btn-info btn-wide"
+              >
+                Load
+              </button>
+              <button
+                onClick={handleSaveClick}
+                className="btn btn-info btn-wide"
+                disabled={!mainData.length}
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -258,9 +277,12 @@ const QuestionCard = ({ onClick, account }: Props) => {
             onChange={(e) => handleInputOnChange(e.target.value)}
             type="text"
             placeholder="Type here"
-            className="input input-bordered my-2 w-full max-w-xs"
+            className="input input-bordered my-2 w-full"
           />
-          <div className="modal-action">
+          <div className="modal-action w-full justify-between">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
             <button
               onClick={handleSaveQuizButton}
               className="btn btn-primary w-24"
@@ -270,30 +292,33 @@ const QuestionCard = ({ onClick, account }: Props) => {
                 <span className="loading loading-dots loading-xs ml-1"></span>
               )}
             </button>
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
-            </form>
           </div>
         </div>
       </dialog>
 
       <dialog id="my_modal_2" className="modal">
-        <div className="modal-box">
-          {isPendingNames && <LoadingSpinner />}
-          <h3 className="mb-2 text-lg font-bold">Choose a saved quiz!</h3>
-          <ul className="menu menu-md w-full rounded-box bg-base-200">
-            {namesArray.map((i, index) => {
-              return (
-                <li key={`${i}${index}`}>
-                  <a onClick={() => handleLoadExistingQuiz(i)}>{i}</a>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="modal-box relative">
+          {!namesArray.length && isPendingNames && (
+            <div className="absolute right-[50%] top-[50%] flex items-center justify-center">
+              <LoadingSpinner />
+            </div>
+          )}
+          {namesArray.length > 0 && (
+            <>
+              <h3 className="mb-2 text-lg font-bold">Choose a saved quiz!</h3>
+              <ul className="menu menu-md w-full rounded-box bg-base-200">
+                {namesArray.map((i, index) => {
+                  return (
+                    <li key={`${i}${index}`}>
+                      <a onClick={() => handleLoadExistingQuiz(i)}>{i}</a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
           <div className="modal-action">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
               <button className="btn">Close</button>
             </form>
           </div>

@@ -35,7 +35,7 @@ export interface MainDataContextType {
   setMainData: React.Dispatch<React.SetStateAction<QuestionSet[]>>;
 }
 
-export type AccountData = DbUser | null | "invalid token";
+export type AccountData = DbUser | null;
 
 export interface UserResponse {
   message: string;

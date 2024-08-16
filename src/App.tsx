@@ -23,8 +23,6 @@ const handleAuthCheck = (
   if (receivedData) {
     if (receivedData.message !== "error") {
       setAccountData(receivedData.userData);
-    } else {
-      setAccountData("invalid token");
     }
   }
 };

@@ -9,7 +9,7 @@ import {
   type QuestionSet,
 } from "./helpers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { showPlayersModal } from "./helpers/modal-func";
 import ShowResults from "./components/HostComponents/ShowResults";
 import ErrorPage from "./components/ErrorPage";
@@ -59,9 +59,6 @@ const HostMain = () => {
     if (data) {
       if (data.message !== "error") {
         setAccountData(data.userData);
-      } else {
-        toast.error("Session expired, log in nigga!");
-        setAccountData("invalid token");
       }
     }
   }, [data]);

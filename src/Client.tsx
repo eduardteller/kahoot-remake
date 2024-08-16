@@ -8,7 +8,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import { wsConnectClient } from "./helpers/webSockets";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorPage from "./components/ErrorPage";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useFetchUserAccount } from "./hooks/queryHooks";
 import LoadingPage from "./components/LoadingPage";
 
@@ -38,9 +38,6 @@ const ClientBase = () => {
     if (data) {
       if (data.message !== "error") {
         setAccountData(data.userData);
-      } else {
-        toast.error("Session expired, log in nigga!");
-        setAccountData("invalid token");
       }
     }
   }, [data]);
@@ -48,7 +45,7 @@ const ClientBase = () => {
   useEffect(() => {
     if (!socketReference.current && sessData) {
       let currAvatar = "";
-      if (accountData !== "invalid token" && accountData !== null) {
+      if (accountData !== null) {
         currAvatar = accountData.avatar;
       }
       const cleanup = wsConnectClient(
