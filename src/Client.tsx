@@ -35,10 +35,26 @@ const ClientBase = () => {
   const { data, isLoading, error } = useFetchUserAccount(true);
 
   useEffect(() => {
+    if (data) {
+      if (data.message !== "error") {
+        setAccountData(data.userData);
+      } else {
+        toast.error("Session expired, log in nigga!");
+        setAccountData("invalid token");
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (!socketReference.current && sessData) {
+      let currAvatar = "";
+      if (accountData !== "invalid token" && accountData !== null) {
+        currAvatar = accountData.avatar;
+      }
       const cleanup = wsConnectClient(
         sessData.name,
         sessData.id,
+        currAvatar,
         setCurrentState,
         socketReference,
         setCurrentRevealState,
@@ -51,17 +67,6 @@ const ClientBase = () => {
       };
     }
   }, [sessData]);
-
-  useEffect(() => {
-    if (data) {
-      if (data.message !== "error") {
-        setAccountData(data.userData);
-      } else {
-        toast.error("Session expired, log in nigga!");
-        setAccountData("invalid token");
-      }
-    }
-  }, [data]);
 
   if (isLoading) return <LoadingPage />;
   if (error) return <ErrorPage />;

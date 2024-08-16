@@ -29,7 +29,10 @@ const Scoreboard = ({ sessionId, nextQuestionSet }: Props) => {
                 key={`${i}${index}`}
                 className={`li-main ${index === 0 ? "li-active" : "li-regular"}`}
               >
-                <p>{i.name}</p>
+                <div className="ml-4 h-full">
+                  {/* <img src={} alt="avatar" /> */}
+                  <p>{i.name}</p>
+                </div>
                 <p>{i.xp}</p>
               </li>
             );
