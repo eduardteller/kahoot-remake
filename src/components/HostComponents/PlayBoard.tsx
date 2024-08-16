@@ -12,6 +12,7 @@ import Rombus from "../Svg/Rombus";
 import Circle from "../Svg/Circle";
 import Square from "../Svg/Square";
 import LoadingPage from "../LoadingPage";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface Props {
   sessionId: number;
@@ -22,7 +23,7 @@ const svgStyle = "w-10 absolute top-[50%] translate-y-[-50%] left-5 text-white";
 
 const PlayBoard = ({ sessionId, changeState }: Props) => {
   const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
-  // const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
   const [mainIndex, setMainIndex] = useState(0);
   const [timer, setTimer] = useState(15);
@@ -91,6 +92,10 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
     );
   }
 
+  const handleOnLoadImage = () => {
+    setImageLoaded(true);
+  };
+
   return (
     <div className="relative mx-auto my-8 flex max-w-7xl flex-col items-center font-mont">
       <h1 className="my-4 text-center text-2xl font-bold">
@@ -98,16 +103,17 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
       </h1>
 
       <div className="relative flex h-60 w-full items-center justify-center bg-base-100 py-8">
-        {/* <img
-          onLoad={() => setImageLoaded(true)}
+        <img
           className="h-full"
-          src="/src/assets/123.svg"
-          alt=""
+          src="/public/placeholder-image.webp"
+          alt="image"
+          onLoad={handleOnLoadImage}
         />
         {!imageLoaded && (
-          <div className="loading loading-spinner loading-lg absolute right-[50%] top-[50%] translate-x-[50%] translate-y-[-50%]"></div>
-        )} */}
-        <div className="h-full w-96 bg-base-200"></div>
+          <div className="absolute right-[50%] top-[50%] flex translate-x-[50%] translate-y-[-50%] items-center justify-center">
+            <LoadingSpinner />
+          </div>
+        )}
         <div className="absolute left-5 top-[50%] flex h-16 w-16 translate-y-[-50%] items-center justify-center rounded-full bg-primary">
           <p className="text-3xl font-extrabold text-white">{timer}</p>
         </div>

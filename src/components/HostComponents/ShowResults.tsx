@@ -45,7 +45,12 @@ const ShowResults = ({ sessionId }: Props) => {
                   key={`${i}${index}`}
                   className={`li-main ${index === 0 ? "li-active" : "li-regular"}`}
                 >
-                  <p>{i.name}</p>
+                  <img
+                    className="absolute left-0 top-0 h-12"
+                    src={i.avatar ?? "/src/assets/placeholder_avatar.png"}
+                    alt="avatar"
+                  />
+                  <p className="ml-10">{i.name}</p>
                   <p>{i.xp}</p>
                 </li>
               );

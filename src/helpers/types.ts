@@ -12,6 +12,7 @@ export type Client = {
   name: string;
   answer: number;
   xp: number;
+  avatar: string;
 };
 
 export interface ReceivedData {

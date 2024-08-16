@@ -74,7 +74,12 @@ const HostMain = () => {
       <Toaster position="bottom-center" reverseOrder={true} />
       <Header account={accountData}>
         <MainDataContext.Provider value={{ mainData, setMainData }}>
-          {stateManager[0] && <NavCard changeState={manipulateModal}></NavCard>}
+          {stateManager[0] && (
+            <NavCard
+              changeState={manipulateModal}
+              account={accountData}
+            ></NavCard>
+          )}
           {stateManager[1] && (
             <PlayBoard
               changeState={changeState}

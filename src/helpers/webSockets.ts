@@ -2,11 +2,6 @@ import { Dispatch, MutableRefObject } from "react";
 import { Client, StateOfClient, Status } from "./types";
 import { serverUrl } from "../hooks/apiFunctions";
 
-// const serverAddress =
-//   "ws" + import.meta.env.VITE_PRODUCTION === "true"
-//     ? "s"
-//     : "" + "://" + serverUrl;
-
 const serverAddress =
   "ws" +
   ((import.meta.env.VITE_PRODUCTION as string) === "true" ? "s" : "") +
@@ -26,7 +21,6 @@ export const wsConnectHost = (
 
   socketReference.current.onmessage = (event) => {
     const received = JSON.parse(event.data);
-    console.log(received);
     switch (received.type) {
       case "client_data":
         setUsers(received.clients as Client[]);

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import QuestionCard from "./QuestionCard";
 import { useMainDataContext } from "../../hooks/useMainDataContext";
+import { AccountData } from "../../helpers/types";
 
 interface Props {
   changeState: () => void;
+  account: AccountData;
 }
 
-const NavCard = ({ changeState }: Props) => {
+const NavCard = ({ changeState, account }: Props) => {
   const [openQuestions, setOpenQuestions] = useState(false);
   const { mainData } = useMainDataContext();
 
@@ -41,7 +43,9 @@ const NavCard = ({ changeState }: Props) => {
           </div>
         </div>
       )}
-      {openQuestions && <QuestionCard onClick={changeDiv}></QuestionCard>}
+      {openQuestions && (
+        <QuestionCard account={account} onClick={changeDiv}></QuestionCard>
+      )}
     </>
   );
 };

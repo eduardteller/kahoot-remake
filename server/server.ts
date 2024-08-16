@@ -336,6 +336,60 @@ app.use(cookieParser());
 // Initialize Passport and use session
 app.use(passport.initialize());
 
+app.get("/api/get-quiz/:id", async (req: Request, res: Response) => {
+  const quizId = req.params.id as string;
+  const client = new MongoClient(uri);
+  const database = client.db("kahoot-clone");
+  const quizes = database.collection("quizes");
+  const rec = quizes.find({
+    discordId: quizId,
+  });
+  const nameArray: string[] = [];
+  for await (const doc of rec) {
+    nameArray.push(doc.name as string);
+  }
+  await client.close();
+  res.json({ names: nameArray });
+});
+
+app.get("/api/get-quiz-main/:id", async (req: Request, res: Response) => {
+  const quizId = req.params.id as string;
+  const client = new MongoClient(uri);
+  const database = client.db("kahoot-clone");
+  const quizes = database.collection("quizes");
+  const rec = await quizes.findOne({
+    name: quizId,
+  });
+  await client.close();
+  res.json({ data: rec });
+});
+
+app.post("/api/save-quiz", async (req: Request, res: Response) => {
+  const received = req.body;
+  const client = new MongoClient(uri);
+  const database = client.db("kahoot-clone");
+  const quizes = database.collection("quizes");
+  let responesFromMongo = false;
+  if (received) {
+    const id = received.discordId as number;
+    const data = received.data as QuestionSet[];
+    const name = received.name as string;
+    const rec = await quizes.insertOne({
+      dataArray: data,
+      discordId: id,
+      name: name,
+    });
+    responesFromMongo = rec.acknowledged;
+  }
+  await client.close();
+
+  if (responesFromMongo) {
+    res.status(200).send();
+  } else {
+    res.status(500).send();
+  }
+});
+
 app.get("/auth/discord", (req: Request, res: Response, next: NextFunction) => {
   const redirectUri = req.query.redirect_uri || req.headers.referer || "/";
   passport.authenticate("discord", {

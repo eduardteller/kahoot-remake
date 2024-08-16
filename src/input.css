@@ -10,5 +10,5 @@
 }
 
 .li-main {
-  @apply flex h-12 items-center justify-between overflow-hidden rounded-lg p-4 text-xl font-semibold;
+  @apply relative flex h-12 items-center justify-between overflow-hidden rounded-lg p-4 text-xl font-semibold;
 }
