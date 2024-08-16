@@ -52,18 +52,14 @@ export const wsConnectHost = (
 export const wsConnectClient = (
   name: string,
   connectionID: number,
+  avatar: string | undefined,
   setCurrentState: Dispatch<React.SetStateAction<StateOfClient | null>>,
   setSocketReference: MutableRefObject<WebSocket | null>,
   setCurrentRevealState: Dispatch<React.SetStateAction<Status>>,
 ) => {
   setSocketReference.current = new WebSocket(
     serverAddress +
-      `?clientId=${encodeURIComponent(name)}&connectId=${encodeURIComponent(connectionID)}`,
-  );
-
-  console.log(
-    serverAddress +
-      `?clientId=${encodeURIComponent(name)}&connectId=${encodeURIComponent(connectionID)}`,
+      `?clientId=${encodeURIComponent(name)}&connectId=${encodeURIComponent(connectionID)}&avatar=${encodeURIComponent(avatar ?? "")}`,
   );
 
   setSocketReference.current.onopen = () => {
