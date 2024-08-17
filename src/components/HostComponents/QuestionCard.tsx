@@ -238,8 +238,8 @@ const QuestionCard = ({ onClick, account }: Props) => {
     <>
       <div className="card mx-auto my-8 w-[512px] bg-base-100 shadow-xl">
         <div className="card-body relative items-center text-center">
-          <h2 className="card-title">Add question</h2>
-          <div className="my-2 w-full">
+          <h2 className="card-title">Create quiz</h2>
+          <div className="mb-2 mt-4 w-full">
             <input
               type="text"
               placeholder="Question..."
@@ -287,6 +287,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
           <button
             onClick={() => setMainData([])}
             className="btn btn-ghost absolute left-8 top-6"
+            disabled={!mainData.length}
           >
             Clear
           </button>
