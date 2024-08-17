@@ -258,7 +258,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
                     type="text"
                     className={`grow`}
                     value={answerData[index].answer}
-                    placeholder={`Answer ${element}...`}
+                    placeholder={`Answer ${element + 1}...`}
                     onChange={(e) => handleTextChange(index, e.target.value)}
                   />
                   <input
