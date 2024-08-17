@@ -364,6 +364,18 @@ app.get("/api/get-quiz-main/:id", async (req: Request, res: Response) => {
   res.json({ data: rec });
 });
 
+app.get("/api/del-quiz-main/:id", async (req: Request, res: Response) => {
+  const quizId = req.params.id as string;
+  const client = new MongoClient(uri);
+  const database = client.db("kahoot-clone");
+  const quizes = database.collection("quizes");
+  await quizes.deleteOne({
+    name: quizId,
+  });
+  await client.close();
+  res.send();
+});
+
 app.post("/api/save-quiz", async (req: Request, res: Response) => {
   const received = req.body;
   const client = new MongoClient(uri);

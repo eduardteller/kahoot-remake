@@ -89,12 +89,28 @@ const QuestionCard = ({ onClick, account }: Props) => {
     return dataNamesNew.json();
   };
 
+  const delQuiz = async () => {
+    return await fetch(
+      `http://localhost:5090/api/del-quiz-main/${requestedQuizName}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+  };
+
   //REACT QUERY HOOKS
 
   const { isPending, mutate } = useMutation({
     mutationKey: ["new-quiz"],
     mutationFn: sendData,
-    onSuccess: () => toast.success("Quiz saved!"),
+    onSuccess: () => {
+      toast.success("Quiz saved!");
+      (document.getElementById("my_modal_1") as HTMLFormElement).close();
+    },
     onError: () => toast.error("Error"),
   });
 
@@ -114,6 +130,18 @@ const QuestionCard = ({ onClick, account }: Props) => {
     mutationFn: getQuiz,
     onSuccess: (data) => {
       setMainData(data.data.dataArray);
+      (document.getElementById("my_modal_2") as HTMLFormElement).close();
+      toast.success("Quiz loaded!");
+    },
+  });
+
+  const { mutate: mutateDelQuiz, isPending: isDeleting } = useMutation({
+    mutationKey: ["del-quiz-data"],
+    mutationFn: delQuiz,
+    onSuccess: () => {
+      // setMainData([]);
+      mutateGet();
+      toast.success("Quiz deleted!");
     },
   });
 
@@ -158,6 +186,14 @@ const QuestionCard = ({ onClick, account }: Props) => {
       if (err instanceof z.ZodError) {
         toast.error(err.issues[0].message);
       }
+    }
+  };
+  const handleDeleteExistingQuiz = (i: string) => {
+    try {
+      setRequestedQuizName(i);
+      mutateDelQuiz();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -237,28 +273,34 @@ const QuestionCard = ({ onClick, account }: Props) => {
             );
           })}
           <div className="card-actions mt-4 items-center">
-            <button onClick={onClick} className="btn btn-error w-32">
+            <button onClick={onClick} className="btn w-32">
               Back
             </button>
             <button className="btn btn-success w-32" onClick={addToMainData}>
               Add
             </button>
           </div>
-          <div className="absolute right-8 top-6 rounded-xl bg-base-200 px-4 py-2">
-            <p className="font-semibold">Quiz count: {mainData.length}</p>
+          <div className="btn btn-ghost absolute right-8 top-6">
+            <p className="">Quiz count: {mainData.length}</p>
           </div>
+          <button
+            onClick={() => setMainData([])}
+            className="btn btn-ghost absolute left-8 top-6"
+          >
+            Clear
+          </button>
           {account && (
             <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl bg-base-200 p-4">
               <h3 className="my-2 font-semibold">Save/Load Quiz</h3>
               <button
                 onClick={handleLoadClick}
-                className="btn btn-info btn-wide"
+                className="btn btn-primary btn-wide"
               >
                 Load
               </button>
               <button
                 onClick={handleSaveClick}
-                className="btn btn-info btn-wide"
+                className="btn btn-secondary btn-wide"
                 disabled={!mainData.length}
               >
                 Save
@@ -289,7 +331,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
             >
               Ok{" "}
               {isPending && (
-                <span className="loading loading-dots loading-xs ml-1"></span>
+                <span className="loading loading-spinner loading-xs ml-1"></span>
               )}
             </button>
           </div>
@@ -298,25 +340,42 @@ const QuestionCard = ({ onClick, account }: Props) => {
 
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box relative">
-          {!namesArray.length && isPendingNames && (
-            <div className="absolute right-[50%] top-[50%] flex items-center justify-center">
-              <LoadingSpinner />
-            </div>
-          )}
-          {namesArray.length > 0 && (
+          <h3 className="mb-2 text-lg font-bold">Choose a saved quiz!</h3>
+          {namesArray.length > 0 && !isDeleting && (
             <>
-              <h3 className="mb-2 text-lg font-bold">Choose a saved quiz!</h3>
               <ul className="menu menu-md w-full rounded-box bg-base-200">
                 {namesArray.map((i, index) => {
                   return (
-                    <li key={`${i}${index}`}>
+                    <li className="relative" key={`${i}${index}`}>
                       <a onClick={() => handleLoadExistingQuiz(i)}>{i}</a>
+                      <button
+                        className={`absolute right-0 top-0`}
+                        onClick={() => handleDeleteExistingQuiz(i)}
+                      >
+                        Delete
+                        {isDeleting && (
+                          <span className="loading loading-spinner loading-xs"></span>
+                        )}
+                      </button>
                     </li>
                   );
                 })}
               </ul>
             </>
           )}
+
+          {(isDeleting || isPendingNames) && (
+            <div className="my-8 flex h-full w-full items-center justify-center">
+              <LoadingSpinner></LoadingSpinner>
+            </div>
+          )}
+
+          {namesArray.length === 0 && (
+            <div className="my-8 flex h-full w-full items-center justify-center">
+              <p>No saved quizes!</p>
+            </div>
+          )}
+
           <div className="modal-action">
             <form method="dialog">
               <button className="btn">Close</button>
