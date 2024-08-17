@@ -110,6 +110,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
     onSuccess: () => {
       toast.success("Quiz saved!");
       (document.getElementById("my_modal_1") as HTMLFormElement).close();
+      setInputName("");
     },
     onError: () => toast.error("Error"),
   });
@@ -314,12 +315,12 @@ const QuestionCard = ({ onClick, account }: Props) => {
         <div className="modal-box">
           <h3 className="text-lg font-bold">Give quiz a name!</h3>
           <input
-            value={inputName}
             disabled={isPending}
+            value={inputName}
             onChange={(e) => handleInputOnChange(e.target.value)}
             type="text"
             placeholder="Type here"
-            className="input input-bordered my-2 w-full"
+            className={`input input-bordered my-2 w-full`}
           />
           <div className="modal-action w-full justify-between">
             <form method="dialog">
@@ -328,6 +329,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
             <button
               onClick={handleSaveQuizButton}
               className="btn btn-primary w-24"
+              disabled={isPending}
             >
               Ok{" "}
               {isPending && (
@@ -341,6 +343,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box relative">
           <h3 className="mb-2 text-lg font-bold">Choose a saved quiz!</h3>
+
           {namesArray.length > 0 && !isDeleting && (
             <>
               <ul className="menu menu-md w-full rounded-box bg-base-200">
