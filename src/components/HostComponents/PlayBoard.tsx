@@ -22,7 +22,12 @@ interface Props {
 const svgStyle = "w-10 absolute top-[50%] translate-y-[-50%] left-5 text-white";
 
 const PlayBoard = ({ sessionId, changeState }: Props) => {
-  const colorArr = ["bg-error", "bg-info", "bg-warning", "bg-success"];
+  const colorArr = [
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-yellow-500",
+    "bg-green-500",
+  ];
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showScoreboard, setShowScoreboard] = useState(false);
   const [mainIndex, setMainIndex] = useState(0);
@@ -97,7 +102,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
   };
 
   return (
-    <div className="relative mx-auto my-8 flex max-w-7xl flex-col items-center font-mont">
+    <div className="relative mx-auto mb-12 flex max-w-7xl flex-col items-center font-mont">
       <h1 className="my-4 text-center text-2xl font-bold">
         {mainData[mainIndex].question}
       </h1>
@@ -105,7 +110,7 @@ const PlayBoard = ({ sessionId, changeState }: Props) => {
       <div className="relative flex h-60 w-full items-center justify-center bg-base-100 py-8">
         <img
           className="h-full"
-          src="/public/placeholder-image.webp"
+          src="/placeholder-image.webp"
           alt="image"
           onLoad={handleOnLoadImage}
         />

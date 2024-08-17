@@ -56,7 +56,7 @@ function AppBase() {
 
   return (
     <Header account={accountData}>
-      <div className="card mx-auto mt-12 w-96 bg-base-100 shadow-xl">
+      <div className="card mx-auto my-12 w-96 bg-base-100 shadow-xl">
         <div className="card-body items-center text-center">
           <h2 className="card-title">Start Kahoot! 👇</h2>
           <p>Choose host or client mode</p>

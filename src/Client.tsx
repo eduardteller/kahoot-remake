@@ -4,7 +4,6 @@ import ClientNav from "./components/ClientComponents/ClientNav";
 import MainButtonInterface from "./components/ClientComponents/MainButtonInterface";
 import Header from "./components/Header";
 import { AccountData, StateOfClient, Status } from "./helpers/types";
-import LoadingSpinner from "./components/LoadingSpinner";
 import { wsConnectClient } from "./helpers/webSockets";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorPage from "./components/ErrorPage";
@@ -31,6 +30,7 @@ const ClientBase = () => {
   const [currentState, setCurrentState] = useState<StateOfClient | null>(null);
   const [sessData, setSessData] = useState<JoinData | null>(null);
   const socketReference = useRef<WebSocket | null>(null);
+  const [place, setPlace] = useState(-1);
 
   const { data, isLoading, error } = useFetchUserAccount(true);
 
@@ -55,6 +55,7 @@ const ClientBase = () => {
         setCurrentState,
         socketReference,
         setCurrentRevealState,
+        setPlace,
       );
 
       setCurrentState("wait");
@@ -72,7 +73,7 @@ const ClientBase = () => {
     <>
       <Toaster position="bottom-center" reverseOrder={true} />
       <Header account={accountData}>
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto flex h-96 max-w-7xl flex-col items-center justify-center">
           {!currentState && (
             <ClientNav
               accountData={accountData}
@@ -80,11 +81,11 @@ const ClientBase = () => {
             ></ClientNav>
           )}
           {currentState === "wait" && socketReference.current && (
-            <div className="mt-12 flex h-full w-full justify-center gap-2">
+            <div className="flex h-full w-full items-center justify-center gap-2">
               <h3 className="text-lg font-semibold">
-                Connected! Waiting for the start.
+                Connected! Waiting for the start...
               </h3>
-              <LoadingSpinner />
+              <span className="loading loading-ring loading-sm"></span>
             </div>
           )}
           {sessData && currentState === "set" && (
@@ -95,6 +96,7 @@ const ClientBase = () => {
           )}
           {currentState === "reveal" && (
             <ClientAnswerResponse
+              place={place}
               currentState={currentRevealState}
             ></ClientAnswerResponse>
           )}

@@ -33,8 +33,8 @@ const ShowResults = ({ sessionId }: Props) => {
   return (
     <>
       <BustConfetti />
-      <div className="mx-auto mt-8 flex max-w-7xl flex-col items-center font-mont">
-        <h1 className="mx-auto mb-8 rounded-lg bg-white px-8 py-4 text-center text-3xl font-bold text-zinc-900">
+      <div className="mx-auto my-12 flex max-w-7xl flex-col items-center font-mont">
+        <h1 className="mx-auto mb-4 rounded-lg bg-white px-8 py-4 text-center text-3xl font-bold text-zinc-900">
           Results
         </h1>
         <div className="w-full">
@@ -47,7 +47,11 @@ const ShowResults = ({ sessionId }: Props) => {
                 >
                   <img
                     className="absolute left-0 top-0 h-12"
-                    src={i.avatar ?? "/src/assets/placeholder_avatar.png"}
+                    src={
+                      i.avatar !== null && i.avatar !== ""
+                        ? i.avatar
+                        : "/src/assets/placeholder_avatar.png"
+                    }
                     alt="avatar"
                   />
                   <p className="ml-10">{i.name}</p>

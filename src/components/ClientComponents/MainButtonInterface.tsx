@@ -35,31 +35,31 @@ const MainButtonInterface = ({ currentState, sessData }: Props) => {
   if (error) return <ErrorPage />;
 
   return (
-    <div className="mt-24 flex w-full flex-wrap">
+    <div className="flex w-full flex-wrap">
       <button
         onClick={() => recordAndSend(0)}
         className={`${buttonStyle} bg-red-500 hover:bg-red-600`}
       >
-        <Triangle styles="w-20"></Triangle>
+        <Triangle styles="w-16"></Triangle>
       </button>
       <button
         onClick={() => recordAndSend(1)}
         className={`${buttonStyle} bg-blue-500 hover:bg-blue-600`}
       >
-        <Rombus styles="w-20"></Rombus>
+        <Rombus styles="w-16"></Rombus>
       </button>
 
       <button
         onClick={() => recordAndSend(2)}
         className={`${buttonStyle} bg-yellow-500 hover:bg-yellow-600`}
       >
-        <Circle styles="w-20"></Circle>
+        <Circle styles="w-16"></Circle>
       </button>
       <button
         onClick={() => recordAndSend(3)}
         className={`${buttonStyle} bg-green-500 hover:bg-green-600`}
       >
-        <Square styles="w-20"></Square>
+        <Square styles="w-16"></Square>
       </button>
     </div>
   );

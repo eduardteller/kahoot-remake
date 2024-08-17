@@ -7,7 +7,9 @@ import LoadingSpinner from "../LoadingSpinner";
 import { z } from "zod";
 
 const QuestionSchema = z.object({
-  answer: z.string().min(1, { message: "The answers cannot be empty." }),
+  answer: z
+    .string()
+    .min(1, { message: "The question/answers cannot be empty." }),
   correct: z.boolean(),
 });
 
@@ -45,7 +47,6 @@ const QuestionCard = ({ onClick, account }: Props) => {
   const [namesArray, setNamesArray] = useState<string[]>([]);
 
   //API FUNCTIONS
-
   const sendData = async () => {
     return await fetch("http://localhost:5090/api/save-quiz", {
       method: "POST",
@@ -103,7 +104,6 @@ const QuestionCard = ({ onClick, account }: Props) => {
   };
 
   //REACT QUERY HOOKS
-
   const { isPending, mutate } = useMutation({
     mutationKey: ["new-quiz"],
     mutationFn: sendData,
@@ -126,7 +126,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
     onError: () => toast.error("Error"),
   });
 
-  const { mutate: mutateGetQuiz } = useMutation({
+  const { mutate: mutateGetQuiz, isPending: isPendingQuizData } = useMutation({
     mutationKey: ["get-quiz-data"],
     mutationFn: getQuiz,
     onSuccess: (data) => {
@@ -140,14 +140,12 @@ const QuestionCard = ({ onClick, account }: Props) => {
     mutationKey: ["del-quiz-data"],
     mutationFn: delQuiz,
     onSuccess: () => {
-      // setMainData([]);
       mutateGet();
       toast.success("Quiz deleted!");
     },
   });
 
   //HANDLERS
-
   const handleTextChange = (index: number, value: string) => {
     const updatedArr = [...answerData];
     updatedArr[index].answer = value;
@@ -243,7 +241,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
             <input
               type="text"
               placeholder="Question..."
-              className={`input input-bordered w-full`}
+              className={`input input-bordered w-full ${errorText ? "border-error" : ""}`}
               value={questionData}
               onChange={(e) => setQuestionData(e.target.value)}
             />
@@ -345,7 +343,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
         <div className="modal-box relative">
           <h3 className="mb-2 text-lg font-bold">Choose a saved quiz!</h3>
 
-          {namesArray.length > 0 && !isDeleting && (
+          {namesArray.length > 0 && !isDeleting && !isPendingQuizData && (
             <>
               <ul className="menu menu-md w-full rounded-box bg-base-200">
                 {namesArray.map((i, index) => {
@@ -368,13 +366,13 @@ const QuestionCard = ({ onClick, account }: Props) => {
             </>
           )}
 
-          {(isDeleting || isPendingNames) && (
+          {(isDeleting || isPendingNames || isPendingQuizData) && (
             <div className="my-8 flex h-full w-full items-center justify-center">
               <LoadingSpinner></LoadingSpinner>
             </div>
           )}
 
-          {namesArray.length === 0 && (
+          {namesArray.length === 0 && !isPendingNames && (
             <div className="my-8 flex h-full w-full items-center justify-center">
               <p>No saved quizes!</p>
             </div>

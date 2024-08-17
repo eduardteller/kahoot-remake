@@ -95,8 +95,6 @@ wss.on("connection", async (ws, request: WebSocket) => {
       ? query.avatar[0]
       : query.avatar;
 
-    console.log(currentAvatar);
-
     const conn = connectIdRaw ? parseInt(connectIdRaw) : null;
 
     const searchedConnection = connections.find((value) => value.id === conn);
@@ -210,7 +208,16 @@ app.post("/api/end-game", (req, res) => {
     const currentSession = connections.find((value) => value.id === id);
     if (currentSession && currentSession.host) {
       for (const client of currentSession.clients) {
-        client.ws.send(JSON.stringify({ type: "end" }));
+        const sortedData: Client[] = currentSession.clients.sort(
+          (a, b) => a.xp - b.xp,
+        );
+        sortedData.reverse();
+        client.ws.send(
+          JSON.stringify({
+            type: "end",
+            place: sortedData.indexOf(client) + 1,
+          }),
+        );
       }
       res.status(200).send();
     }
@@ -234,9 +241,11 @@ app.post("/api/reveal-answers", (req, res) => {
           );
           continue;
         }
+
         if (currentSession?.questions[index].answers[cl.answer].correct) {
           cl.xp = cl.xp + 100;
         }
+
         cl.ws.send(
           JSON.stringify({
             type: "reveal",

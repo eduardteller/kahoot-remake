@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { JoinData } from "../../Client";
 import { AccountData } from "../../helpers/types";
+import { z } from "zod";
+import toast from "react-hot-toast";
 
 interface Props {
   setSessData: (data: JoinData) => void;
@@ -9,28 +11,40 @@ interface Props {
 
 const ClientNav = ({ setSessData, accountData }: Props) => {
   const [textValue, setTextValue] = useState("");
-  const [idValue, setIdValue] = useState(0);
+  const [idValue, setIdValue] = useState<number | null>(null);
 
   const joinSession = () => {
-    // Initialize variables
-    let nameNew = "";
-    let idNew = 0;
+    try {
+      let userNameParsed = "";
+      let sessionIdParsed = 0;
+      // Determine the new name based on accountData or textValue
+      if (accountData) {
+        userNameParsed = z
+          .string()
+          .min(1, { message: "User name cannot be empty" })
+          .parse(accountData.nickname);
+      } else {
+        userNameParsed = z
+          .string()
+          .min(1, { message: "User name cannot be empty" })
+          .parse(textValue);
+      }
 
-    // Determine the new name based on accountData or textValue
-    if (accountData && accountData !== "invalid token") {
-      nameNew = accountData.nickname;
-    } else if (textValue) {
-      nameNew = textValue;
-    }
+      // If a valid name exists, assign the idValue
+      sessionIdParsed = z
+        .number({ message: "Invalid ID" })
+        .min(10000, { message: "Invalid ID" })
+        .max(50000, { message: "Invalid ID" })
+        .parse(idValue);
 
-    // If a valid name exists, assign the idValue
-    if (nameNew && idValue) {
-      idNew = idValue;
-    }
-
-    // Only set session data if both name and id are valid
-    if (nameNew && idNew) {
-      setSessData({ name: nameNew, id: idNew });
+      // Only set session data if both name and id are valid
+      setSessData({ name: userNameParsed, id: sessionIdParsed });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        for (const one of err.issues) {
+          toast.error(one.message);
+        }
+      }
     }
   };
 
@@ -43,38 +57,30 @@ const ClientNav = ({ setSessData, accountData }: Props) => {
   };
 
   useEffect(() => {
-    if (accountData !== null && accountData !== "invalid token") {
+    if (accountData !== null) {
       setTextValue(accountData.nickname);
     }
   }, [accountData]);
 
   return (
-    <div className="card mx-auto mt-12 w-96 bg-base-100">
+    <div className="card mx-auto w-96 bg-base-100">
       <div className="card-body items-center text-center">
         <h2 className="card-title">Join Kahoot!</h2>
-        <label className="input input-bordered flex w-full max-w-sm items-center gap-2">
-          Username
-          <input
-            value={textValue}
-            disabled={
-              !(accountData === "invalid token" || accountData === null)
-            }
-            onChange={(e) => handleTextValueChange(e.target.value)}
-            placeholder="Type here"
-            type="text"
-            className="grow"
-          />
-        </label>
-        <label className="input input-bordered flex w-full max-w-sm items-center gap-2">
-          ID
-          <input
-            onChange={(e) => handleIdValueChange(parseInt(e.target.value))}
-            value={idValue}
-            placeholder="Type here"
-            type="number"
-            className="grow"
-          />
-        </label>
+        <input
+          value={textValue}
+          disabled={!(accountData === null)}
+          onChange={(e) => handleTextValueChange(e.target.value)}
+          placeholder="Your name"
+          type="text"
+          className="input input-bordered w-full max-w-sm"
+        />
+        <input
+          onChange={(e) => handleIdValueChange(parseInt(e.target.value))}
+          value={idValue ?? ""}
+          placeholder="Enter Session ID (e.g., 00000)"
+          type="number"
+          className="input input-bordered w-full max-w-sm"
+        />
         <div className="card-actions">
           <button
             onClick={joinSession}

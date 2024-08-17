@@ -23,13 +23,13 @@ const Account = ({ accountData }: Props) => {
           className="btn btn-outline btn-md mr-4 flex items-center justify-center gap-2"
         >
           <Discord styles="w-6 h-6"></Discord>
-          <p className="flex h-6 items-center justify-center">Discord Log In</p>
+          <p className="hidden sm:inline">Discord Log In</p>
         </a>
       )}
 
       {accountData !== null && (
-        <div className="mr-4 flex items-center justify-center gap-2 rounded-xl bg-base-200 px-4 py-2">
-          <div className="flex items-center justify-center gap-2 border-r border-base-content pr-4">
+        <div className="mr-4 flex items-center justify-center gap-2 rounded-xl bg-base-200 px-2 py-2 sm:px-4">
+          <div className="flex items-center justify-center gap-2 sm:border-r-2 sm:border-base-content sm:pr-4">
             <p className="text-lg font-bold"> {accountData.nickname}</p>
             <img
               className="h-8 w-8 rounded-full"
@@ -38,7 +38,10 @@ const Account = ({ accountData }: Props) => {
               alt=""
             />
           </div>
-          <a href={"http://" + serverUrl + "/clear"} className="btn">
+          <a
+            href={"http://" + serverUrl + "/clear"}
+            className="btn hidden sm:inline-flex"
+          >
             Log out
           </a>
           {!imageStatus && <LoadingSpinner />}

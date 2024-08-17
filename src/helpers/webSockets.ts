@@ -50,6 +50,7 @@ export const wsConnectClient = (
   setCurrentState: Dispatch<React.SetStateAction<StateOfClient | null>>,
   setSocketReference: MutableRefObject<WebSocket | null>,
   setCurrentRevealState: Dispatch<React.SetStateAction<Status>>,
+  setPlace: Dispatch<React.SetStateAction<number>>,
 ) => {
   setSocketReference.current = new WebSocket(
     serverAddress +
@@ -70,6 +71,7 @@ export const wsConnectClient = (
       case "end":
         setCurrentState("reveal");
         setCurrentRevealState("end");
+        setPlace(received.place as number);
         break;
       case "reveal":
         setCurrentState("reveal");

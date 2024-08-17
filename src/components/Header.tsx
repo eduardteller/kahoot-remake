@@ -17,7 +17,7 @@ function App({ account, children }: Props) {
           <Account accountData={account} />
         </div>
       </header>
-      <main className="min-h-96 overflow-auto bg-base-200">{children}</main>
+      <main className="overflow-auto bg-base-200">{children}</main>
     </>
   );
 }
