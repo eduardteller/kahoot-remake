@@ -13,7 +13,6 @@ function App({ account, children }: Props) {
       <header className="my-2 flex h-24 items-center justify-center">
         <div className="flex h-full w-full items-center justify-center">
           <div className="h-full flex-1"></div>
-          {/* <img className="h-full flex-1" src="../assets/kahoot.svg" alt="" /> */}
           <Kahoot></Kahoot>
           <Account accountData={account} />
         </div>

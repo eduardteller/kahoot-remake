@@ -25,14 +25,26 @@ const Scoreboard = ({ sessionId, nextQuestionSet }: Props) => {
         <ul className="mx-auto flex w-[75%] flex-col gap-2">
           {data.map((i, index) => {
             return (
+              // <li
+              //   key={`${i}${index}`}
+              //   className={`li-main ${index === 0 ? "li-active" : "li-regular"}`}
+              // >
+              //   <div className="ml-4 h-full">
+              //     {/* <img src={} alt="avatar" /> */}
+              //     <p>{i.name}</p>
+              //   </div>
+              //   <p>{i.xp}</p>
+              // </li>
               <li
                 key={`${i}${index}`}
                 className={`li-main ${index === 0 ? "li-active" : "li-regular"}`}
               >
-                <div className="ml-4 h-full">
-                  {/* <img src={} alt="avatar" /> */}
-                  <p>{i.name}</p>
-                </div>
+                <img
+                  className="absolute left-0 top-0 h-12"
+                  src={i.avatar ?? "/src/assets/placeholder_avatar.png"}
+                  alt="avatar"
+                />
+                <p className="ml-10">{i.name}</p>
                 <p>{i.xp}</p>
               </li>
             );
