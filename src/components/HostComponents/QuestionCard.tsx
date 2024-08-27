@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { AccountData, Question, QuestionSet } from "../../helpers/types";
-import toast from "react-hot-toast";
-import { useMainDataContext } from "../../hooks/useMainDataContext";
 import { useMutation } from "@tanstack/react-query";
-import LoadingSpinner from "../LoadingSpinner";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { z } from "zod";
+import { AccountData, Question, QuestionSet } from "../../helpers/types";
+import { httpUrl } from "../../hooks/apiFunctions";
+import { useMainDataContext } from "../../hooks/useMainDataContext";
+import LoadingSpinner from "../LoadingSpinner";
 
 const QuestionSchema = z.object({
   answer: z
@@ -64,7 +65,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
 
   const getNames = async () => {
     const dataNamesNew = await fetch(
-      `http://localhost:5090/api/get-quiz/${account ? account.discordID : ""}`,
+      `${httpUrl}/api/get-quiz/${account ? account.discordID : ""}`,
       {
         method: "GET",
         credentials: "include",
@@ -78,7 +79,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
 
   const getQuiz = async () => {
     const dataNamesNew = await fetch(
-      `http://localhost:5090/api/get-quiz-main/${requestedQuizName}`,
+      `${httpUrl}/api/get-quiz-main/${requestedQuizName}`,
       {
         method: "GET",
         credentials: "include",
@@ -91,16 +92,13 @@ const QuestionCard = ({ onClick, account }: Props) => {
   };
 
   const delQuiz = async () => {
-    return await fetch(
-      `http://localhost:5090/api/del-quiz-main/${requestedQuizName}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    return await fetch(`${httpUrl}/api/del-quiz-main/${requestedQuizName}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
   };
 
   //REACT QUERY HOOKS

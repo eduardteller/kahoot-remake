@@ -1,10 +1,10 @@
 import { QuestionSet, ReceivedData, UserResponse } from "../helpers/types";
 
 export const serverUrl = `${import.meta.env.VITE_BASE_URL}`;
-
-// const httpUrl = "https://" + serverUrl;
 const jasmo = import.meta.env.VITE_PRODUCTION as string;
-const httpUrl = "http" + (jasmo === "true" ? "s" : "") + "://" + serverUrl;
+export const httpUrl =
+  "http" + (jasmo === "true" ? "s" : "") + "://" + serverUrl;
+
 console.log(httpUrl);
 export const sendStartGame = async (sessionId: number) => {
   const response = await fetch(httpUrl + "/api/start-game", {
