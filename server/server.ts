@@ -1,17 +1,16 @@
-import { WebSocketServer, WebSocket } from "ws";
-import express, { NextFunction } from "express";
-import http from "http";
-import * as querystring from "querystring";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-import { Request, Response } from "express";
+import dotenv from "dotenv";
+import express, { NextFunction, Request, Response } from "express";
+import http from "http";
+import jwt from "jsonwebtoken";
+import { MongoClient, ObjectId } from "mongodb";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
-import dotenv from "dotenv";
-import { MongoClient, ObjectId } from "mongodb";
-import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
-import { fileURLToPath } from "url";
 import path from "path";
+import * as querystring from "querystring";
+import { fileURLToPath } from "url";
+import { WebSocket, WebSocketServer } from "ws";
 
 type Question = {
   answer: string;
@@ -310,7 +309,7 @@ passport.use(
     {
       clientID: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_SECRET_ID!,
-      callbackURL: process.env.DISCORD_CALLBACK_URL!,
+      callbackURL: `${process.env.BASE_URL}/auth/discord/callback`,
       scope: ["identify"],
     },
     async (accessToken, refreshToken, profile, done) => {

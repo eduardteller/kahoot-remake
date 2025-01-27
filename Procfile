@@ -1,0 +1,1 @@
+web: pnpm dlx tsx server/server.ts

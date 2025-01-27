@@ -49,7 +49,7 @@ const QuestionCard = ({ onClick, account }: Props) => {
 
   //API FUNCTIONS
   const sendData = async () => {
-    return await fetch("http://localhost:5090/api/save-quiz", {
+    return await fetch("/api/save-quiz", {
       method: "POST",
       credentials: "include",
       headers: {
